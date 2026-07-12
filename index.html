@@ -54,9 +54,8 @@
 
         /* Utilities */
         .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 2rem;
+            width: 100%;
+            padding: 0 3rem; /* Ensures it stretches left-right with breathing room */
         }
         
         .text-center { text-align: center; }
@@ -204,17 +203,13 @@
             line-height: 1.1;
             letter-spacing: -0.03em;
             margin-bottom: 1.5rem;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
             color: var(--text-main);
         }
 
         .hero p {
             font-size: 1.25rem;
             color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 3rem auto;
+            margin-bottom: 3rem;
         }
 
         .hero-actions {
@@ -237,6 +232,7 @@
             gap: 3rem;
             align-items: center;
             filter: grayscale(100%);
+            justify-content: center;
         }
         
         .trust-logos div {
@@ -348,8 +344,7 @@
         
         .section-header {
             text-align: center;
-            max-width: 600px;
-            margin: 0 auto 4rem auto;
+            margin-bottom: 4rem;
         }
 
         .section-header h2 {
@@ -459,8 +454,7 @@
 
         /* FAQ */
         .faq-list {
-            max-width: 768px;
-            margin: 0 auto;
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -566,6 +560,7 @@
         }
 
         @media (max-width: 768px) {
+            .container { padding: 0 1.5rem; }
             .nav-links, .login-link { display: none; }
             .bento-grid { grid-template-columns: 1fr; }
             .timeline { flex-direction: column; gap: 2rem; }
