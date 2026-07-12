@@ -344,9 +344,16 @@
             text-decoration: none;
         }
 
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
+            text-align: left;
+            min-width: 600px;
         }
 
         .data-table th, .data-table td {
@@ -637,15 +644,16 @@
                             <h2>Assigned Assessments</h2>
                             <a href="#" class="card-action">View All</a>
                         </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Assessment Title</th>
-                                    <th>Due Date</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
+                        <div style="overflow-x: auto; width: 100%;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Assessment Title</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
                             <tbody>
                                 <tr>
                                     <td>
@@ -667,6 +675,7 @@
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
