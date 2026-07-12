@@ -1,215 +1,819 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome - Financial Wellbeing Platform</title>
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/reset.css">
-  <link rel="stylesheet" href="assets/css/variables.css">
-  <link rel="stylesheet" href="assets/css/typography.css">
-  <link rel="stylesheet" href="assets/css/layout.css">
-  <link rel="stylesheet" href="assets/css/forms.css">
-  <link rel="stylesheet" href="assets/css/animations.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | FCI LMS Enterprise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #FAFAFA;
+            --bg-surface: #FFFFFF;
+            --primary: #2563EB;
+            --primary-hover: #1D4ED8;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --text-light: #94A3B8;
+            --border: #E2E8F0;
+            --border-hover: #CBD5E1;
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --focus-ring: rgba(37, 99, 235, 0.15);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-card: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.04);
+            
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-  <!-- Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="assets/js/firebase-init.js"></script>
-  <script src="assets/js/storage.js"></script>
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/auth.js"></script>
-</head>
-<body class="auth-body">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
 
-  <div class="split-layout">
-    <!-- Left Branding Section -->
-    <div class="auth-branding">
-      <div class="branding-content animate-fade-in-up">
-        <h1 class="logo-text" style="font-size: 3rem; color: white; margin-bottom: 20px;">FWB Platform</h1>
-        <p style="font-size: 1.25rem; color: rgba(255,255,255,0.8); line-height: 1.6; max-width: 400px;">
-          Empower your workforce with deep financial insights. Build a healthier, stress-free culture today.
-        </p>
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .split-layout {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Left Panel - Brand */
+        .brand-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        /* Minimalist Institutional Seal */
+        .logo-seal {
+            width: 36px;
+            height: 36px;
+            color: var(--primary);
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+        }
+
+        .brand-content h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-content p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 3rem;
+        }
+
+        /* Glassmorphic Feature Card */
+        .feature-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-glass);
+        }
+
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .brand-footer {
+            position: relative;
+            z-index: 1;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Right Panel - Auth */
+        .auth-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-color: var(--bg-base);
+            overflow-y: auto;
+        }
+
+        .auth-card {
+            background: var(--bg-surface);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+        }
+
+        .auth-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .auth-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header p {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
+        /* Forms */
+        .form-view {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .form-view.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating Labels & Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.25rem 1rem 0.5rem;
+            font-size: 0.9375rem;
+            color: var(--text-main);
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            transition: all var(--transition);
+        }
+
+        .form-input:hover {
+            border-color: var(--border-hover);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.9375rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: all 0.2s ease-out;
+            background: var(--bg-surface);
+            padding: 0 4px;
+        }
+
+        /* Floating interaction */
+        .form-input:focus ~ .form-label,
+        .form-input:not(:placeholder-shown) ~ .form-label {
+            top: 0;
+            font-size: 0.75rem;
+            color: var(--primary);
+        }
         
-        <div class="testimonial">
-          "The most intuitive financial wellbeing assessment we've ever deployed."
-          <div class="author">— HR Director, Enterprise Corp</div>
+        .form-input:not(:placeholder-shown):not(:focus) ~ .form-label {
+            color: var(--text-muted);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle:hover { color: var(--text-muted); }
+
+        /* Form Utilities */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            user-select: none;
+        }
+
+        .text-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--primary);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .text-link:hover { color: var(--primary-hover); }
+
+        /* Buttons */
+        .btn-submit {
+            width: 100%;
+            padding: 0.875rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-submit:active { transform: translateY(0); }
+
+        /* Loading State */
+        .btn-submit .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .btn-submit.loading .btn-text { display: none; }
+        .btn-submit.loading .spinner { display: block; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .divider::before { margin-right: 1rem; }
+        .divider::after { margin-left: 1rem; }
+
+        /* SSO Buttons */
+        .sso-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-sso {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all var(--transition);
+        }
+
+        .btn-sso:hover {
+            background-color: var(--bg-base);
+            border-color: var(--border-hover);
+        }
+
+        .btn-sso svg { width: 20px; height: 20px; }
+
+        /* Password Strength Meter */
+        .strength-meter {
+            display: flex;
+            gap: 4px;
+            margin-top: -0.5rem;
+            margin-bottom: 1.25rem;
+            height: 4px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            background-color: var(--border);
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-align: right;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .auth-footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Error Shake Animation */
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .input-error { border-color: var(--danger) !important; }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.875rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .brand-panel { padding: 3rem; }
+            .brand-content h1 { font-size: 2.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .brand-panel { display: none; }
+            .auth-panel { padding: 1rem; }
+            .auth-card { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-layout">
+        <!-- Left Brand Panel -->
+        <div class="brand-panel">
+            <div class="logo-container">
+                <!-- Minimalist Institutional Seal SVG -->
+                <svg class="logo-seal" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="3" opacity="0.2"/>
+                    <path d="M20 6C12.268 6 6 12.268 6 20C6 27.732 12.268 34 20 34" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="15" y="15" width="10" height="10" transform="rotate(45 20 20)" fill="currentColor"/>
+                </svg>
+                <a href="index.html" style="text-decoration:none; color:inherit;">FCI LMS</a>
+            </div>
+
+            <div class="brand-content">
+                <h1>The standard for enterprise management.</h1>
+                <p>Access your secure workspace. Built for high-performance teams requiring uncompromising security and seamless user experiences.</p>
+                
+                <div class="feature-card">
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <div class="feature-icon">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            End-to-End Encryption
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            SOC2 Type II Compliant
+                        </li>
+                        <li class="feature-item">
+                            <div class="feature-icon">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            Enterprise SSO Integration
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                &copy; 2026 FCI LMS Enterprise Systems. All rights reserved.
+            </div>
         </div>
-      </div>
-      <!-- Decorative Elements -->
-      <div class="glow-orb" style="top: -20%; left: -10%;"></div>
-      <div class="glow-orb" style="bottom: -20%; right: -10%; background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%);"></div>
+
+        <!-- Right Form Panel -->
+        <div class="auth-panel">
+            <div class="auth-card">
+                
+                <!-- SIGN IN FORM -->
+                <div id="signInView" class="form-view active">
+                    <div class="auth-header">
+                        <h2>Welcome back</h2>
+                        <p>Sign in to your organizational account</p>
+                    </div>
+
+                    <div id="signInError" class="error-message"></div>
+
+                    <form id="signInForm" onsubmit="handleAuth(event, 'signIn')">
+                        <div class="input-group">
+                            <input type="email" id="loginEmail" class="form-input" placeholder=" " required autocomplete="email">
+                            <label for="loginEmail" class="form-label">Work Email / Employee ID</label>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="password" id="loginPassword" class="form-input" placeholder=" " required autocomplete="current-password">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+
+                        <div class="form-row">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox">
+                                <span class="checkbox-label">Remember me</span>
+                            </label>
+                            <a href="#" class="text-link">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="signInBtn">
+                            <span class="btn-text">Sign In Securely</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+
+                    <div class="divider">Or continue with</div>
+
+                    <div class="sso-group">
+                        <button type="button" class="btn-sso">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                            Continue with Google
+                        </button>
+                        <button type="button" class="btn-sso">
+                            <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><path d="M10 0H0v10h10V0z" fill="#f25022"/><path d="M21 0H11v10h10V0z" fill="#7fba00"/><path d="M10 11H0v10h10V11z" fill="#00a4ef"/><path d="M21 11H11v10h10V11z" fill="#ffb900"/></svg>
+                            Continue with Microsoft
+                        </button>
+                        <button type="button" class="btn-sso">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                            SAML / Company SSO
+                        </button>
+                    </div>
+
+                    <div class="auth-footer">
+                        Don't have an account? <a href="#" class="text-link" onclick="switchView('signUpView')">Sign Up</a>
+                    </div>
+                </div>
+
+                <!-- SIGN UP FORM -->
+                <div id="signUpView" class="form-view">
+                    <div class="auth-header">
+                        <h2>Create Account</h2>
+                        <p>Request enterprise platform access</p>
+                    </div>
+
+                    <div id="signUpError" class="error-message"></div>
+
+                    <form id="signUpForm" onsubmit="handleAuth(event, 'signUp')">
+                        <div class="input-group">
+                            <input type="text" id="regName" class="form-input" placeholder=" " required>
+                            <label for="regName" class="form-label">Full Name</label>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="email" id="regEmail" class="form-input" placeholder=" " required>
+                            <label for="regEmail" class="form-label">Work Email</label>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="password" id="regPassword" class="form-input" placeholder=" " required oninput="checkStrength(this.value)">
+                            <label for="regPassword" class="form-label">Create Password</label>
+                            <button type="button" class="password-toggle" onclick="togglePassword('regPassword')">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Password Strength Meter -->
+                        <div class="strength-meter">
+                            <div class="strength-bar" id="str1"></div>
+                            <div class="strength-bar" id="str2"></div>
+                            <div class="strength-bar" id="str3"></div>
+                        </div>
+                        <span class="strength-text" id="strText">Password strength</span>
+
+                        <div class="form-row" style="margin-top: 1.5rem;">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" required>
+                                <span class="checkbox-label" style="font-size: 0.8125rem;">I accept the <a href="#" class="text-link">Terms</a> & <a href="#" class="text-link">Privacy Policy</a></span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="signUpBtn">
+                            <span class="btn-text">Create Account</span>
+                            <div class="spinner"></div>
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        Already have an account? <a href="#" class="text-link" onclick="switchView('signInView')">Sign In</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <!-- Right Form Section -->
-    <main class="auth-container">
-      <div class="auth-card glass-panel animate-fade-in-up" style="animation-delay: 0.1s;">
-        
-        <!-- Toggle Buttons -->
-        <div class="auth-toggle">
-          <button class="toggle-btn active" id="showLoginBtn">Sign In</button>
-          <button class="toggle-btn" id="showSignupBtn">Sign Up</button>
-        </div>
-
-        <div class="auth-header" style="text-align: left; margin-bottom: 30px;">
-          <h2 id="authTitle" style="font-size: 2rem; color: var(--color-text-primary); margin-bottom: 8px;">Welcome back</h2>
-          <p id="authSubtitle" class="text-secondary">Sign in to your account.</p>
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="auth-form">
-          <div class="form-group">
-            <label class="form-label" for="loginRole">Select Your Role</label>
-            <select id="loginRole" class="form-input">
-              <option value="Employee">Employee</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="loginEmail">Email Address</label>
-            <input type="text" id="loginEmail" class="form-input" placeholder="e.g. jane@company.com" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required>
-          </div>
-          <div id="loginError" class="error-text" style="display: none; background: var(--color-danger-light); color: var(--color-danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500;"></div>
-          <button type="submit" class="btn-primary w-full" id="loginSubmitBtn" style="padding: 14px; font-size: 1.1rem; margin-top: 10px;">Sign In</button>
-        </form>
-
-        <!-- Sign Up Form (Hidden by default) -->
-        <form id="signupForm" class="auth-form" style="display: none;">
-          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="form-group">
-              <label class="form-label" for="firstName">First Name</label>
-              <input type="text" id="firstName" class="form-input" placeholder="e.g. Jane" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="lastName">Last Name</label>
-              <input type="text" id="lastName" class="form-input" placeholder="e.g. Doe" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="signupEmail">Work Email</label>
-            <input type="email" id="signupEmail" class="form-input" placeholder="jane@company.com" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" class="form-input" placeholder="••••••••" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="department">Department</label>
-            <select id="department" class="form-input">
-              <option value="HR">Human Resources</option>
-              <option value="Engineering">Engineering</option>
-              <option value="Sales">Sales</option>
-              <option value="Marketing">Marketing</option>
-            </select>
-          </div>
-          
-          <div id="signupError" class="error-text" style="display: none; background: var(--color-danger-light); color: var(--color-danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500;"></div>
-          
-          <button type="submit" class="btn-primary w-full" id="signupSubmitBtn" style="padding: 14px; font-size: 1.1rem; margin-top: 10px;">Create Account</button>
-        </form>
-        
-      </div>
-    </main>
-  </div>
-
-  <style>
-    body, html { height: 100%; margin: 0; }
-    .split-layout { display: flex; height: 100vh; }
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
-    .auth-branding {
-      flex: 1;
-      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 60px;
-    }
-    
-    .branding-content { position: relative; z-index: 2; }
-    
-    .glow-orb {
-      position: absolute;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-    
-    .testimonial {
-      margin-top: 60px;
-      padding: 24px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      color: rgba(255,255,255,0.9);
-      font-style: italic;
-      max-width: 400px;
-    }
-    .testimonial .author { font-style: normal; font-weight: 600; margin-top: 12px; font-size: 0.9rem; color: #fff;}
-    
-    .auth-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--color-bg);
-    }
-    
-    .glass-panel {
-      width: 100%;
-      max-width: 480px;
-      padding: 40px;
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.05);
-    }
+    <!-- Application Scripts -->
+    <script src="assets/js/firebase-init.js"></script>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
 
-    .auth-toggle {
-      display: flex;
-      background: var(--color-border-light);
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 24px;
-    }
+    <script>
+        // Form View Toggler
+        function switchView(viewId) {
+            document.querySelectorAll('.form-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+            // Reset forms
+            document.getElementById('signInForm').reset();
+            document.getElementById('signUpForm').reset();
+            document.getElementById('signInError').style.display = 'none';
+            document.getElementById('signUpError').style.display = 'none';
+            checkStrength(''); // Reset meter
+        }
 
-    .toggle-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      border-radius: 8px;
-      font-weight: 600;
-      color: var(--color-text-secondary);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+        // Password Visibility Toggler
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+        }
 
-    .toggle-btn.active {
-      background: white;
-      color: var(--color-text-primary);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+        // Live Password Strength Meter
+        function checkStrength(password) {
+            const str1 = document.getElementById('str1');
+            const str2 = document.getElementById('str2');
+            const str3 = document.getElementById('str3');
+            const strText = document.getElementById('strText');
 
-    @media (max-width: 768px) {
-      .auth-branding { display: none; }
-      .split-layout { flex-direction: column; }
-    }
-  </style>
+            // Reset
+            [str1, str2, str3].forEach(el => el.style.backgroundColor = 'var(--border)');
+            strText.textContent = 'Password strength';
+            strText.style.color = 'var(--text-light)';
 
-  <script src="assets/js/auth-ui.js"></script>
+            if (password.length === 0) return;
+
+            let strength = 0;
+            if (password.length >= 8) strength += 1;
+            if (password.match(/(?=.*[0-9])/)) strength += 1;
+            if (password.match(/(?=.*[A-Z])(?=.*[^a-zA-Z0-9])/)) strength += 1;
+
+            if (strength === 1) {
+                str1.style.backgroundColor = 'var(--danger)';
+                strText.textContent = 'Weak';
+                strText.style.color = 'var(--danger)';
+            } else if (strength === 2) {
+                str1.style.backgroundColor = 'var(--warning)';
+                str2.style.backgroundColor = 'var(--warning)';
+                strText.textContent = 'Good';
+                strText.style.color = 'var(--warning)';
+            } else if (strength === 3) {
+                str1.style.backgroundColor = 'var(--success)';
+                str2.style.backgroundColor = 'var(--success)';
+                str3.style.backgroundColor = 'var(--success)';
+                strText.textContent = 'Strong';
+                strText.style.color = 'var(--success)';
+            }
+        }
+
+        // Form Submission & Animations
+        async function handleAuth(e, type) {
+            e.preventDefault();
+            
+            const btn = type === 'signIn' ? document.getElementById('signInBtn') : document.getElementById('signUpBtn');
+            const form = type === 'signIn' ? document.getElementById('signInForm') : document.getElementById('signUpForm');
+            const errDiv = type === 'signIn' ? document.getElementById('signInError') : document.getElementById('signUpError');
+            
+            errDiv.style.display = 'none';
+
+            // Button Loading State
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            try {
+                if (type === 'signIn') {
+                    const email = document.getElementById('loginEmail').value;
+                    const pass = document.getElementById('loginPassword').value;
+                    await window.Auth.login(email, pass);
+                } else if (type === 'signUp') {
+                    const name = document.getElementById('regName').value;
+                    const email = document.getElementById('regEmail').value;
+                    const pass = document.getElementById('regPassword').value;
+                    
+                    let firstName = name;
+                    let lastName = '';
+                    if (name.includes(' ')) {
+                        const parts = name.split(' ');
+                        firstName = parts[0];
+                        lastName = parts.slice(1).join(' ');
+                    }
+
+                    const payload = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        password: pass,
+                        department: 'General',
+                        role: email === 'admin@fci.com' ? 'Admin' : 'Employee'
+                    };
+
+                    const result = await window.ApiService.signup(payload);
+                    if (result && result.id) {
+                        const sessionData = {
+                            token: 'active-session-' + result.id,
+                            user: result
+                        };
+                        window.Auth.session = sessionData;
+                        window.StorageHelper.set('session', sessionData);
+                    }
+                }
+
+                // Success Animation
+                btn.classList.remove('loading');
+                btn.innerHTML = '<span class="btn-text">Success</span>';
+                btn.style.backgroundColor = 'var(--success)';
+                
+                // Redirect
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 800);
+
+            } catch (error) {
+                // Shake on error
+                form.classList.remove('shake');
+                void form.offsetWidth; // trigger reflow
+                form.classList.add('shake');
+                
+                // Show Error message
+                errDiv.textContent = error.message || 'Authentication failed';
+                errDiv.style.display = 'block';
+
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.innerHTML = `<span class="btn-text">${type === 'signIn' ? 'Sign In Securely' : 'Create Account'}</span><div class="spinner"></div>`;
+            }
+        }
+
+        // Caps Lock Detection
+        document.addEventListener('keydown', function(e) {
+            const isCapsLockOn = e.getModifierState('CapsLock');
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            
+            passwordInputs.forEach(input => {
+                if (document.activeElement === input) {
+                    if (isCapsLockOn) {
+                        input.style.borderColor = 'var(--warning)';
+                    } else {
+                        input.style.borderColor = '';
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
