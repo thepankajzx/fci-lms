@@ -1,156 +1,895 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial Wellbeing Assessment</title>
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/reset.css">
-  <link rel="stylesheet" href="assets/css/variables.css">
-  <link rel="stylesheet" href="assets/css/typography.css">
-  <link rel="stylesheet" href="assets/css/layout.css">
-  <link rel="stylesheet" href="assets/css/animations.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise SaaS | Modern Assessments</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Color System */
+            --bg-base: #FAFAFA;
+            --bg-card: #FFFFFF;
+            --primary: #2563EB;
+            --primary-hover: #1D4ED8;
+            --secondary: #64748B;
+            --success: #16A34A;
+            --warning: #F59E0B;
+            --danger: #DC2626;
+            --border: #E5E7EB;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            
+            /* Typography */
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-  <style>
-    /* Landing Page Specific Styles */
-    .hero {
-      min-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: var(--spacing-16) var(--spacing-6);
-      background: linear-gradient(135deg, var(--color-bg) 0%, #E0F2FE 100%);
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: var(--color-text-primary);
-      max-width: 800px;
-      margin-bottom: var(--spacing-6);
-      letter-spacing: -0.03em;
-      animation: fade-in-up 0.8s var(--transition-normal);
-    }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    .hero p {
-      font-size: 1.25rem;
-      color: var(--color-text-secondary);
-      max-width: 600px;
-      margin-bottom: var(--spacing-8);
-      animation: fade-in-up 0.8s var(--transition-normal) 0.1s both;
-    }
+        /* Utilities */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
 
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--color-primary);
-      color: white;
-      padding: var(--spacing-4) var(--spacing-8);
-      border-radius: var(--radius-full);
-      font-weight: 600;
-      font-size: 1.125rem;
-      transition: background-color var(--transition-fast), transform var(--transition-fast);
-      box-shadow: var(--shadow-md);
-      animation: fade-in-up 0.8s var(--transition-normal) 0.2s both;
-    }
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
 
-    .btn-primary:hover {
-      background-color: var(--color-primary-hover);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
+        .btn-secondary {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border-color: var(--border);
+            box-shadow: var(--shadow-sm);
+        }
 
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--spacing-4) var(--spacing-8);
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: var(--z-sticky);
-      border-bottom: 1px solid var(--color-border-light);
-    }
+        .btn-secondary:hover {
+            background-color: var(--bg-base);
+            border-color: #D1D5DB;
+            transform: translateY(-1px);
+        }
 
-    .logo {
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: var(--color-text-primary);
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            transition: all var(--transition-fast);
+        }
 
-    .logo-icon {
-      width: 24px;
-      height: 24px;
-      fill: var(--color-primary);
-    }
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
 
-    .nav-links {
-      display: flex;
-      gap: var(--spacing-6);
-    }
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.02em;
+        }
 
-    .nav-link {
-      font-weight: 500;
-      color: var(--color-text-secondary);
-      transition: color var(--transition-fast);
-    }
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 6px;
+        }
 
-    .nav-link:hover {
-      color: var(--color-primary);
-    }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
 
-    .btn-login {
-      background-color: var(--color-card-bg);
-      border: 1px solid var(--color-border);
-      padding: var(--spacing-2) var(--spacing-4);
-      border-radius: var(--radius-full);
-      font-weight: 500;
-      transition: all var(--transition-fast);
-    }
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
 
-    .btn-login:hover {
-      border-color: var(--color-primary);
-      color: var(--color-primary);
-    }
-  </style>
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .login-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+        
+        .login-link:hover { color: var(--primary); }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 160px;
+            padding-bottom: 100px;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at top center, rgba(37,99,235,0.04) 0%, rgba(250,250,250,1) 100%);
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-main);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+        }
+
+        .trust-indicators {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.7;
+        }
+        
+        .trust-logos {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+            filter: grayscale(100%);
+        }
+        
+        .trust-logos div {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--secondary);
+            letter-spacing: -0.02em;
+        }
+
+        /* Platform Overview (Mockup) */
+        .ui-mockup-wrapper {
+            margin-top: 4rem;
+            perspective: 1000px;
+        }
+
+        .ui-mockup {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            display: flex;
+            height: 600px;
+            width: 100%;
+            transform: rotateX(2deg) scale(0.98);
+            transition: transform 0.5s ease;
+        }
+
+        .ui-mockup:hover {
+            transform: rotateX(0deg) scale(1);
+        }
+
+        .mockup-sidebar {
+            width: 240px;
+            border-right: 1px solid var(--border);
+            background: #F8FAFC;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mockup-item {
+            height: 32px;
+            background: var(--border);
+            border-radius: 6px;
+            opacity: 0.5;
+        }
+        
+        .mockup-item.active {
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 3px solid var(--primary);
+            opacity: 1;
+        }
+
+        .mockup-main {
+            flex: 1;
+            padding: 2rem;
+            background: var(--bg-base);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .mockup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mockup-title { width: 200px; height: 28px; background: #E2E8F0; border-radius: 6px; }
+        .mockup-profile { width: 36px; height: 36px; background: #E2E8F0; border-radius: 50%; }
+
+        .mockup-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .mockup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: 120px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mockup-chart {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            flex: 1;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+        }
+        
+        .mockup-bar {
+            flex: 1;
+            background: #E2E8F0;
+            border-radius: 4px 4px 0 0;
+        }
+
+        /* Features Section */
+        .section-padding { padding: 100px 0; }
+        
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 4rem auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .bento-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            transition: all var(--transition-smooth);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: #D1D5DB;
+        }
+
+        .icon-wrapper {
+            width: 48px;
+            height: 48px;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .icon-wrapper svg { width: 24px; height: 24px; }
+
+        .bento-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .bento-card p {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
+        /* How It Works (Timeline) */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 4rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .timeline-step {
+            position: relative;
+            z-index: 1;
+            width: 22%;
+            background: var(--bg-base);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 0 8px var(--bg-base);
+        }
+
+        .timeline-step h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-step p {
+            color: var(--text-muted);
+            font-size: 0.9375rem;
+        }
+
+        /* FAQ */
+        .faq-list {
+            max-width: 768px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .faq-summary {
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.0625rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none;
+        }
+        
+        .faq-summary::-webkit-details-marker { display: none; }
+        
+        .faq-summary::after {
+            content: '+';
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--secondary);
+            transition: transform var(--transition-fast);
+        }
+        
+        details[open] .faq-summary::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 60px 0 40px 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-col h5 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 0.75rem; }
+        .footer-col ul a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            transition: color var(--transition-fast);
+        }
+        
+        .footer-col ul a:hover { color: var(--primary); }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 3.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .login-link { display: none; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .timeline { flex-direction: column; gap: 2rem; }
+            .timeline::before { display: none; }
+            .timeline-step { width: 100%; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .ui-mockup { height: 400px; }
+            .mockup-sidebar { display: none; }
+        }
+    </style>
 </head>
 <body>
-  
-  <nav class="navbar">
-    <div class="logo">
-      <svg class="logo-icon" viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-      Wellbeing Platform
-    </div>
-    <div class="nav-links">
-      <a href="#" class="nav-link">Features</a>
-      <a href="#" class="nav-link">Assessments</a>
-      <a href="login.html" class="btn-login">Sign In</a>
-    </div>
-  </nav>
 
-  <main>
-    <section class="hero">
-      <h1>Understand your financial health today.</h1>
-      <p>A premium platform designed to assess, understand, and improve the financial wellbeing of your team through structured insights.</p>
-      <a href="login.html" class="btn-primary">
-        Get Started
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px;">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </a>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container nav-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon"></div>
+                Zx Designs
+            </a>
+            <div class="nav-links">
+                <a href="#platform">Platform</a>
+                <a href="#assessments">Assessments</a>
+                <a href="#solutions">Solutions</a>
+                <a href="#about">About</a>
+            </div>
+            <div class="nav-actions">
+                <a href="login.html" class="login-link">Sign in</a>
+                <a href="login.html" class="btn btn-primary">Book Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero text-center">
+        <div class="container">
+            <div class="fade-up">
+                <span class="tag">Platform 2.0 is now live</span>
+                <h1>Enterprise Assessment & Reporting, Redefined.</h1>
+                <p>Deliver personalized evaluations, track risk analysis, and uncover actionable insights without the friction of a traditional LMS.</p>
+                <div class="hero-actions">
+                    <a href="login.html" class="btn btn-primary">Book a Demo</a>
+                    <a href="#platform" class="btn btn-secondary">Explore Platform</a>
+                </div>
+                
+                <div class="trust-indicators mt-12">
+                    <span class="text-muted text-sm font-medium">TRUSTED BY INNOVATIVE TEAMS</span>
+                    <div class="trust-logos">
+                        <div>Acme Corp</div>
+                        <div>GlobalTech</div>
+                        <div>Stark Ind.</div>
+                        <div>Wayne Ent.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UI Mockup -->
+            <div class="ui-mockup-wrapper fade-up" style="transition-delay: 200ms;">
+                <div class="ui-mockup">
+                    <div class="mockup-sidebar">
+                        <div class="mockup-item active" style="width: 80%; margin-bottom: 2rem;"></div>
+                        <div class="mockup-item" style="width: 70%;"></div>
+                        <div class="mockup-item" style="width: 90%;"></div>
+                        <div class="mockup-item" style="width: 60%;"></div>
+                        <div class="mockup-item" style="width: 75%; margin-top: auto;"></div>
+                    </div>
+                    <div class="mockup-main">
+                        <div class="mockup-header">
+                            <div class="mockup-title"></div>
+                            <div class="mockup-profile"></div>
+                        </div>
+                        <div class="mockup-grid">
+                            <div class="mockup-card">
+                                <div class="mockup-item" style="width: 40px; height: 40px; border-radius: 8px; margin-bottom: 12px;"></div>
+                                <div class="mockup-item" style="width: 60%; height: 12px; margin-bottom: 8px;"></div>
+                                <div class="mockup-item" style="width: 40%; height: 24px;"></div>
+                            </div>
+                            <div class="mockup-card">
+                                <div class="mockup-item" style="width: 40px; height: 40px; border-radius: 8px; margin-bottom: 12px;"></div>
+                                <div class="mockup-item" style="width: 50%; height: 12px; margin-bottom: 8px;"></div>
+                                <div class="mockup-item" style="width: 45%; height: 24px;"></div>
+                            </div>
+                            <div class="mockup-card">
+                                <div class="mockup-item" style="width: 40px; height: 40px; border-radius: 8px; margin-bottom: 12px;"></div>
+                                <div class="mockup-item" style="width: 70%; height: 12px; margin-bottom: 8px;"></div>
+                                <div class="mockup-item" style="width: 30%; height: 24px;"></div>
+                            </div>
+                        </div>
+                        <div class="mockup-chart">
+                            <div class="mockup-bar" style="height: 30%;"></div>
+                            <div class="mockup-bar" style="height: 50%;"></div>
+                            <div class="mockup-bar" style="height: 40%;"></div>
+                            <div class="mockup-bar" style="height: 80%; background: var(--primary);"></div>
+                            <div class="mockup-bar" style="height: 60%;"></div>
+                            <div class="mockup-bar" style="height: 90%;"></div>
+                            <div class="mockup-bar" style="height: 70%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-  </main>
 
+    <!-- Platform Features -->
+    <section id="platform" class="section-padding">
+        <div class="container">
+            <div class="section-header fade-up">
+                <span class="tag">Features</span>
+                <h2>Everything you need, nothing you don't.</h2>
+                <p class="text-muted">A purpose-built suite of tools designed exclusively for professional enterprise assessments.</p>
+            </div>
+            
+            <div class="bento-grid">
+                <!-- Feature 1 -->
+                <div class="bento-card fade-up">
+                    <div class="icon-wrapper">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                    <h3>Assessment Engine</h3>
+                    <p>Distraction-free focus modes, timed modules, and randomized question banks tailored for enterprise deployment.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="bento-card fade-up" style="transition-delay: 100ms;">
+                    <div class="icon-wrapper">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                    </div>
+                    <h3>Personalised Reports</h3>
+                    <p>Automatically generate high-fidelity, actionable PDF reports upon assessment completion based on user scoring.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="bento-card fade-up" style="transition-delay: 200ms;">
+                    <div class="icon-wrapper">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h3>Role & Risk Management</h3>
+                    <p>Identify organizational skill gaps, compliance risks, and map out department-wide progress seamlessly.</p>
+                </div>
+                <!-- Feature 4 -->
+                <div class="bento-card fade-up">
+                    <div class="icon-wrapper">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    </div>
+                    <h3>Survey Engine</h3>
+                    <p>Collect employee feedback, pulse surveys, and qualitative data with our intuitive builder.</p>
+                </div>
+                <!-- Feature 5 -->
+                <div class="bento-card fade-up" style="transition-delay: 100ms;">
+                    <div class="icon-wrapper">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3>Advanced Analytics</h3>
+                    <p>Real-time dashboards providing deep insights into completion rates, average scores, and metadata.</p>
+                </div>
+                <!-- Feature 6 -->
+                <div class="bento-card fade-up" style="transition-delay: 200ms;">
+                    <div class="icon-wrapper">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    </div>
+                    <h3>Seamless Integration</h3>
+                    <p>Connect with your existing HRIS systems using our robust APIs and webhooks for data consistency.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section-padding" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div class="container">
+            <div class="section-header fade-up">
+                <h2>A frictionless journey.</h2>
+                <p class="text-muted">From login to analysis in four simple steps.</p>
+            </div>
+            
+            <div class="timeline fade-up">
+                <div class="timeline-step">
+                    <div class="step-number">1</div>
+                    <h4>Secure Login</h4>
+                    <p>Employees access the platform via SSO or Magic Links into a clean dashboard.</p>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">2</div>
+                    <h4>Take Assessment</h4>
+                    <p>Engage with our distraction-free, fast, and responsive question engine.</p>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">3</div>
+                    <h4>Instant Calculation</h4>
+                    <p>Our backend instantly computes complex scoring logic and risk thresholds.</p>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-number">4</div>
+                    <h4>Personalised Report</h4>
+                    <p>Receive a detailed breakdown of strengths, risks, and recommended actions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header fade-up">
+                <h2>Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="faq-list fade-up">
+                <details class="faq-item">
+                    <summary class="faq-summary">How is this different from our current LMS?</summary>
+                    <div class="faq-content">
+                        Zx Designs is built exclusively for enterprise assessments, not course delivery. We focus on speed, analytics, and creating a premium user experience that respects your employees' time, avoiding the clunky interfaces typical of traditional learning systems.
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-summary">Do you support custom reporting requirements?</summary>
+                    <div class="faq-content">
+                        Yes. Our platform allows administrators to configure bespoke grading logic and generate branded PDF reports mapped to your organization's specific competency frameworks.
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-summary">Is the platform secure and compliant?</summary>
+                    <div class="faq-content">
+                        Security is foundational. We are SOC2 Type II compliant, utilizing end-to-end encryption for all personal data, and offering fine-grained role-based access control (RBAC).
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="/" class="logo mb-4">
+                        <div class="logo-icon"></div>
+                        Zx Designs
+                    </a>
+                    <p class="text-muted" style="font-size: 0.9375rem; max-width: 250px;">
+                        The premium standard for enterprise assessments and workforce analytics.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h5>Product</h5>
+                    <ul>
+                        <li><a href="#">Assessments</a></li>
+                        <li><a href="#">Reporting</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Customers</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Security Hub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; 2026 Zx Designs Inc. All rights reserved.</div>
+                <div>Designed for Enterprise.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Scroll interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.getElementById('navbar');
+            
+            // Navbar styling on scroll
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.9)';
+                    navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.05)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.85)';
+                    navbar.style.boxShadow = 'none';
+                }
+            });
+
+            // Intersection Observer for fade-up animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-up').forEach(element => {
+                observer.observe(element);
+            });
+
+            // FAQ Accordion exclusive toggle (optional)
+            const details = document.querySelectorAll('details');
+            details.forEach(targetDetail => {
+                targetDetail.addEventListener('click', () => {
+                    details.forEach(detail => {
+                        if (detail !== targetDetail) {
+                            detail.removeAttribute('open');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
