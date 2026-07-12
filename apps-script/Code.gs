@@ -23,6 +23,9 @@ function handleRequest(e, method) {
       case 'getUsersList': result = getUsersList(data); break;
       case 'adminAddUser': result = adminAddUser(data); break;
       case 'adminRemoveUser': result = adminRemoveUser(data); break;
+      case 'adminGetCourses': result = adminGetCourses(data); break;
+      case 'adminAddCourse': result = adminAddCourse(data); break;
+      case 'adminDeleteCourse': result = adminDeleteCourse(data); break;
       case 'setupDummyData': result = setupDummyData(); break;
       default: result = { success: false, error: 'Unknown action: ' + action };
     }
@@ -323,4 +326,93 @@ function setupDummyData() {
   getSheet('Options').appendRow(['O7', 'Q2', 'No emergency fund', 0]);
 
   return { success: true, message: 'Database setup complete!' };
+}
+
+// --- LMS Phase 2: Course Builder ---
+
+function adminGetCourses(data) {
+  const sheet = getSheet('Assessments');
+  const rows = sheet.getDataRange().getValues();
+  let courses = [];
+  
+  if (rows.length > 1) {
+    for (let i = 1; i < rows.length; i++) {
+      courses.push({
+        id: rows[i][0],
+        name: rows[i][1],
+        category: rows[i][2],
+        description: rows[i][3],
+        status: rows[i][4]
+      });
+    }
+  }
+  return { success: true, courses: courses };
+}
+
+function adminAddCourse(data) {
+  const aSheet = getSheet('Assessments');
+  const qSheet = getSheet('Questions');
+  const oSheet = getSheet('Options');
+  
+  if (aSheet.getLastRow() === 0) aSheet.appendRow(['AssID', 'Name', 'Category', 'Desc', 'Status']);
+  if (qSheet.getLastRow() === 0) qSheet.appendRow(['QID', 'AssID', 'Question', 'Type', 'Weight', 'Req']);
+  if (oSheet.getLastRow() === 0) oSheet.appendRow(['OptID', 'QID', 'OptionText', 'Weight']);
+
+  let maxId = 0;
+  const aRows = aSheet.getDataRange().getValues();
+  for (let i = 1; i < aRows.length; i++) {
+    const currentId = String(aRows[i][0]).replace('A', '');
+    if (!isNaN(currentId) && parseInt(currentId) > maxId) {
+      maxId = parseInt(currentId);
+    }
+  }
+  const assId = 'A' + (maxId + 1);
+  
+  aSheet.appendRow([assId, data.course.name || '', data.course.category || '', data.course.description || '', 'Active']);
+  
+  if (data.questions && Array.isArray(data.questions)) {
+    let maxQId = 0;
+    let maxOId = 0;
+    
+    const qRows = qSheet.getDataRange().getValues();
+    for (let i = 1; i < qRows.length; i++) {
+      const currentId = String(qRows[i][0]).replace('Q', '');
+      if (!isNaN(currentId) && parseInt(currentId) > maxQId) maxQId = parseInt(currentId);
+    }
+    
+    const oRows = oSheet.getDataRange().getValues();
+    for (let i = 1; i < oRows.length; i++) {
+      const currentId = String(oRows[i][0]).replace('O', '');
+      if (!isNaN(currentId) && parseInt(currentId) > maxOId) maxOId = parseInt(currentId);
+    }
+    
+    data.questions.forEach(q => {
+      maxQId++;
+      const qId = 'Q' + maxQId;
+      qSheet.appendRow([qId, assId, q.text || '', q.type || 'single', q.weight || 10, true]);
+      
+      if (q.options && Array.isArray(q.options)) {
+        q.options.forEach(opt => {
+          maxOId++;
+          const oId = 'O' + maxOId;
+          oSheet.appendRow([oId, qId, opt.text || '', opt.weight || 0]);
+        });
+      }
+    });
+  }
+  
+  return { success: true, message: 'Course created successfully', assId: assId };
+}
+
+function adminDeleteCourse(data) {
+  const aSheet = getSheet('Assessments');
+  const aRows = aSheet.getDataRange().getValues();
+  
+  for (let i = 1; i < aRows.length; i++) {
+    if (String(aRows[i][0]) === String(data.assId)) {
+      aSheet.deleteRow(i + 1);
+      return { success: true, message: 'Course deleted successfully' };
+    }
+  }
+  return { success: false, error: 'Course not found' };
 }

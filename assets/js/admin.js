@@ -37,7 +37,8 @@ class AdminController {
 
     navManageCourses.addEventListener('click', (e) => {
       e.preventDefault();
-      switchTab(navManageCourses, viewManageCourses, null); // Placeholder for now
+      switchTab(navManageCourses, viewManageCourses, () => this.loadCoursesDirectory());
+      document.getElementById('viewCourseBuilder').style.display = 'none';
     });
 
     // Add User Modal
@@ -83,6 +84,61 @@ class AdminController {
         err.style.display = 'block';
       } finally {
         btn.textContent = 'Create User';
+      }
+    });
+
+    // --- Course Builder UI Setup ---
+    this.courseQuestions = [];
+    
+    document.getElementById('openCourseBuilderBtn').addEventListener('click', () => {
+      document.getElementById('viewManageCourses').style.display = 'none';
+      document.getElementById('viewCourseBuilder').style.display = 'block';
+      document.getElementById('courseBuilderForm').reset();
+      this.courseQuestions = [];
+      this.renderQuestions();
+    });
+
+    document.getElementById('backToCoursesBtn').addEventListener('click', () => {
+      document.getElementById('viewCourseBuilder').style.display = 'none';
+      document.getElementById('viewManageCourses').style.display = 'block';
+      this.loadCoursesDirectory();
+    });
+
+    document.getElementById('cancelCourseBtn').addEventListener('click', () => {
+      document.getElementById('backToCoursesBtn').click();
+    });
+
+    document.getElementById('addQuestionBtn').addEventListener('click', () => {
+      this.courseQuestions.push({
+        text: '',
+        type: 'single',
+        weight: 10,
+        options: [{text: '', weight: 0}, {text: '', weight: 0}]
+      });
+      this.renderQuestions();
+    });
+
+    document.getElementById('courseBuilderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveCourseBtn');
+      btn.textContent = 'Publishing...';
+      
+      const payload = {
+        course: {
+          name: document.getElementById('cbTitle').value,
+          category: document.getElementById('cbCategory').value,
+          description: document.getElementById('cbDescription').value
+        },
+        questions: this.courseQuestions
+      };
+
+      try {
+        await window.ApiService.addCourse(payload);
+        document.getElementById('backToCoursesBtn').click();
+      } catch (error) {
+        alert('Error creating course: ' + error.message);
+      } finally {
+        btn.textContent = 'Publish Course';
       }
     });
   }
@@ -157,6 +213,105 @@ class AdminController {
     } catch (error) {
       alert('Failed to delete user: ' + error.message);
     }
+  }
+
+  // --- MANAGE COURSES TAB & BUILDER ---
+  static async loadCoursesDirectory() {
+    const tbody = document.getElementById('courseDirectoryBody');
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center" style="padding: 2rem;">Loading courses...</td></tr>`;
+
+    try {
+      const res = await window.ApiService.getCourses();
+      if (res && res.courses && res.courses.length > 0) {
+        tbody.innerHTML = res.courses.map(course => `
+          <tr>
+            <td>${course.id}</td>
+            <td class="font-medium">${course.name}</td>
+            <td>${course.category}</td>
+            <td><span class="status-badge" style="background: var(--color-success-light); color: var(--color-success);">${course.status}</span></td>
+            <td>
+              <button class="btn-sm" style="background: var(--color-danger-light); color: var(--color-danger);" onclick="AdminController.deleteCourse('${course.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-tertiary" style="padding: 2rem;">No courses found.</td></tr>`;
+      }
+    } catch (error) {
+      console.error('Failed to load courses', error);
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger" style="padding: 2rem;">Error loading courses: ${error.message}</td></tr>`;
+    }
+  }
+
+  static async deleteCourse(courseId) {
+    if (!confirm('Are you sure you want to delete this course?')) return;
+    try {
+      await window.ApiService.deleteCourse(courseId);
+      await this.loadCoursesDirectory();
+    } catch (error) {
+      alert('Failed to delete course: ' + error.message);
+    }
+  }
+
+  static renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    
+    this.courseQuestions.forEach((q, qIndex) => {
+      const qDiv = document.createElement('div');
+      qDiv.style.border = '1px solid var(--color-border)';
+      qDiv.style.borderRadius = 'var(--radius-sm)';
+      qDiv.style.padding = '16px';
+      
+      let optionsHTML = '';
+      q.options.forEach((opt, oIndex) => {
+        optionsHTML += `
+          <div style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
+            <input type="text" class="form-input" style="flex: 1;" placeholder="Option text" value="${opt.text}" onchange="AdminController.updateOption(${qIndex}, ${oIndex}, 'text', this.value)">
+            <input type="number" class="form-input" style="width: 80px;" placeholder="Score" value="${opt.weight}" onchange="AdminController.updateOption(${qIndex}, ${oIndex}, 'weight', this.value)">
+            <button type="button" class="btn-secondary" style="padding: 4px 8px;" onclick="AdminController.removeOption(${qIndex}, ${oIndex})">X</button>
+          </div>
+        `;
+      });
+
+      qDiv.innerHTML = `
+        <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+          <h5 style="margin: 0;">Question ${qIndex + 1}</h5>
+          <button type="button" class="btn-sm" style="background: var(--color-danger-light); color: var(--color-danger);" onclick="AdminController.removeQuestion(${qIndex})">Remove</button>
+        </div>
+        <input type="text" class="form-input" style="margin-bottom: 12px;" placeholder="Enter question text..." value="${q.text}" onchange="AdminController.updateQuestion(${qIndex}, 'text', this.value)">
+        
+        <div style="margin-bottom: 8px;"><strong style="font-size: 0.875rem;">Options</strong></div>
+        <div id="optionsContainer-${qIndex}">
+          ${optionsHTML}
+        </div>
+        <button type="button" class="btn-secondary" style="font-size: 0.75rem; padding: 4px 8px; margin-top: 4px;" onclick="AdminController.addOption(${qIndex})">+ Add Option</button>
+      `;
+      container.appendChild(qDiv);
+    });
+  }
+
+  static updateQuestion(qIndex, field, value) {
+    this.courseQuestions[qIndex][field] = value;
+  }
+
+  static updateOption(qIndex, oIndex, field, value) {
+    this.courseQuestions[qIndex].options[oIndex][field] = field === 'weight' ? Number(value) : value;
+  }
+
+  static addOption(qIndex) {
+    this.courseQuestions[qIndex].options.push({text: '', weight: 0});
+    this.renderQuestions();
+  }
+
+  static removeOption(qIndex, oIndex) {
+    this.courseQuestions[qIndex].options.splice(oIndex, 1);
+    this.renderQuestions();
+  }
+
+  static removeQuestion(qIndex) {
+    this.courseQuestions.splice(qIndex, 1);
+    this.renderQuestions();
   }
 }
 
