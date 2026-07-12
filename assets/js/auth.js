@@ -60,6 +60,9 @@ window.Auth = class Auth {
   static logout() {
     this.session = null;
     StorageHelper.remove('session');
+    if (window.FirebaseAuth) {
+      window.FirebaseAuth.signOut();
+    }
     // Redirect to login page
     window.location.href = 'login.html';
   }

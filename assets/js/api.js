@@ -1,97 +1,186 @@
-
-
 /**
- * API Service
- * Handles all communication with the Google Apps Script backend.
+ * API Service (Firebase Version)
+ * Handles all communication with Firebase Auth & Firestore.
  */
 window.ApiService = class ApiService {
   
-  /**
-   * Main request method
-   * @param {string} endpoint - The action parameter string
-   * @param {string} method - 'GET' or 'POST'
-   * @param {object} data - Optional payload for POST requests
-   * @returns {Promise<any>}
-   */
-  static async request(endpoint, method = 'GET', data = null) {
-    const url = `${CONFIG.APPS_SCRIPT_WEB_APP_URL}${endpoint}`;
-    
-    // Add authentication token (User ID for MVP) to headers if available
-    const session = StorageHelper.get('session');
-    const headers = {
-      'Content-Type': 'text/plain;charset=utf-8', // Needed for CORS with Apps Script
-    };
+  // --- Auth & Users ---
 
-    const options = {
-      method: method,
-      headers: headers,
-    };
-
-    // Note: Google Apps Script 'doPost' receives payload as plain text due to CORS,
-    // so we stringify it. We inject session token inside the payload.
-    if (method === 'POST') {
-      const payload = data || {};
-      if (session && session.token) {
-        payload.authToken = session.token; 
-      }
-      options.body = JSON.stringify(payload);
-    } else if (method === 'GET' && session && session.token) {
-      // Append token to GET request URL
-      options.url = `${url}&token=${encodeURIComponent(session.token)}`;
-    }
-
+  static async login(email, password) {
     try {
-      const fetchUrl = options.url || url;
-      const response = await fetch(fetchUrl, options);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const userCredential = await window.FirebaseAuth.signInWithEmailAndPassword(email, password);
+      // Fetch user profile from Firestore
+      const userDoc = await window.FirebaseDB.collection('users').doc(userCredential.user.uid).get();
+      if (!userDoc.exists) {
+        throw new Error('User profile not found in database.');
       }
-      
-      const result = await response.json();
-      
-      // Standardize response validation based on requirements
-      if (!result.success) {
-        throw new Error(result.error || result.message || 'API request failed');
-      }
-
-      // Return user if it exists (for login), otherwise return data
-      return result.user || result.data || result;
+      const userData = userDoc.data();
+      return {
+        id: userCredential.user.uid,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: email,
+        role: userData.role || 'Employee',
+        department: userData.department
+      };
     } catch (error) {
-      console.error('API Request Error:', error);
-      throw error;
+      console.error('Firebase Login Error:', error);
+      throw new Error(error.message);
     }
-  }
-
-  // --- Specific API Calls ---
-
-  static async login(employeeId, password) {
-    return this.request(API_ENDPOINTS.LOGIN, 'POST', { username: employeeId, password: password });
-  }
-
-  static async getDashboard() {
-    const user = window.Auth.getUser();
-    const qs = user ? `&userId=${user.id}` : '';
-    return this.request(API_ENDPOINTS.GET_DASHBOARD + qs, 'GET');
   }
 
   static async signup(payload) {
-    return this.request('?action=signup', 'POST', payload);
+    try {
+      const userCredential = await window.FirebaseAuth.createUserWithEmailAndPassword(payload.email, payload.password);
+      const user = userCredential.user;
+      
+      const userData = {
+        firstName: payload.firstName || '',
+        lastName: payload.lastName || '',
+        email: payload.email,
+        role: payload.role || 'Employee',
+        department: payload.department || 'HR',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      // Save to Firestore 'users' collection
+      await window.FirebaseDB.collection('users').doc(user.uid).set(userData);
+
+      return {
+        id: user.uid,
+        ...userData
+      };
+    } catch (error) {
+      console.error('Firebase Signup Error:', error);
+      throw new Error(error.message);
+    }
   }
 
-  // LMS Phase 1: User Management
+  // --- Admin User Management ---
+
   static async getUsers() {
-    return this.request('?action=getUsersList', 'GET');
+    try {
+      const snapshot = await window.FirebaseDB.collection('users').get();
+      const users = [];
+      snapshot.forEach(doc => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      return { success: true, users: users };
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   static async addUser(userData) {
-    userData.action = 'adminAddUser';
-    return this.request('?action=adminAddUser', 'POST', userData);
+    // Note: Creating a secondary user via Firebase Auth on the client will sign out the current admin.
+    // In a real production app, this requires a Cloud Function or Admin SDK.
+    // For this prototype, we'll just insert the user record directly into Firestore without an Auth account,
+    // OR we can simulate it for now.
+    try {
+      const fakeId = 'U' + new Date().getTime();
+      await window.FirebaseDB.collection('users').doc(fakeId).set({
+        ...userData,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      return { success: true };
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   static async removeUser(userId) {
-    return this.request('?action=adminRemoveUser', 'POST', { userId });
+    try {
+      await window.FirebaseDB.collection('users').doc(userId).delete();
+      return { success: true };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  // --- Dashboard & Analytics ---
+
+  static async getDashboard() {
+    // Dummy dynamic dashboard data for now
+    try {
+      const user = window.Auth.getUser();
+      const snapshot = await window.FirebaseDB.collection('courses').where('status', '==', 'Active').get();
+      let pending = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        pending.push({
+          id: doc.id,
+          name: data.course.name,
+          time: '15 mins'
+        });
+      });
+
+      return {
+        success: true,
+        data: {
+          assigned: pending.length,
+          completed: 0,
+          progress: 0,
+          pendingTasks: pending
+        }
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async getAdminData() {
+    try {
+      const usersSnap = await window.FirebaseDB.collection('users').get();
+      return {
+        success: true,
+        totalUsers: usersSnap.size,
+        totalCompleted: 0,
+        avgScore: 0,
+        recentActivity: []
+      };
+    } catch(error) {
+      throw new Error(error.message);
+    }
+  }
+
+  // --- Course Management (Phase 2) ---
+
+  static async getCourses() {
+    try {
+      const snapshot = await window.FirebaseDB.collection('courses').get();
+      const courses = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        courses.push({
+          id: doc.id,
+          name: data.course.name,
+          category: data.course.category,
+          status: data.status || 'Active'
+        });
+      });
+      return { success: true, courses: courses };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async addCourse(courseData) {
+    try {
+      courseData.status = 'Active';
+      courseData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      const docRef = await window.FirebaseDB.collection('courses').add(courseData);
+      return { success: true, id: docRef.id };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async deleteCourse(courseId) {
+    try {
+      await window.FirebaseDB.collection('courses').doc(courseId).delete();
+      return { success: true };
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }
-
-

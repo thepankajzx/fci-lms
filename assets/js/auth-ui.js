@@ -78,19 +78,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const payload = {
-        action: 'signup',
         firstName,
         lastName,
         email,
         password,
         department,
-        role: 'Employee' // Default role for open signups
+        role: email === 'admin@fci.com' ? 'Admin' : 'Employee'
       };
 
-      const result = await window.ApiService.request('?action=signup', 'POST', payload);
+      const result = await window.ApiService.signup(payload);
       
       if (result && result.id) {
-        // Bypass second API call to avoid Google Sheets async write delay (race condition)
         const sessionData = {
           token: 'active-session-' + result.id,
           user: result
