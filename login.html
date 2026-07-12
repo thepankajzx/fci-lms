@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome - Financial Wellbeing Platform</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/typography.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/forms.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+
+  <!-- JS Files -->
+  <script src="config/apiEndpoints.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+</head>
+<body class="auth-body">
+
+  <div class="split-layout">
+    <!-- Left Branding Section -->
+    <div class="auth-branding">
+      <div class="branding-content animate-fade-in-up">
+        <h1 class="logo-text" style="font-size: 3rem; color: white; margin-bottom: 20px;">FWB Platform</h1>
+        <p style="font-size: 1.25rem; color: rgba(255,255,255,0.8); line-height: 1.6; max-width: 400px;">
+          Empower your workforce with deep financial insights. Build a healthier, stress-free culture today.
+        </p>
+        
+        <div class="testimonial">
+          "The most intuitive financial wellbeing assessment we've ever deployed."
+          <div class="author">— HR Director, Enterprise Corp</div>
+        </div>
+      </div>
+      <!-- Decorative Elements -->
+      <div class="glow-orb" style="top: -20%; left: -10%;"></div>
+      <div class="glow-orb" style="bottom: -20%; right: -10%; background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, transparent 70%);"></div>
+    </div>
+
+    <!-- Right Form Section -->
+    <main class="auth-container">
+      <div class="auth-card glass-panel animate-fade-in-up" style="animation-delay: 0.1s;">
+        
+        <!-- Toggle Buttons -->
+        <div class="auth-toggle">
+          <button class="toggle-btn active" id="showLoginBtn">Sign In</button>
+          <button class="toggle-btn" id="showSignupBtn">Sign Up</button>
+        </div>
+
+        <div class="auth-header" style="text-align: left; margin-bottom: 30px;">
+          <h2 id="authTitle" style="font-size: 2rem; color: var(--color-text-primary); margin-bottom: 8px;">Welcome back</h2>
+          <p id="authSubtitle" class="text-secondary">Sign in to your account.</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <label class="form-label" for="loginRole">Select Your Role</label>
+            <select id="loginRole" class="form-input">
+              <option value="Employee">Employee</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email Address</label>
+            <input type="text" id="loginEmail" class="form-input" placeholder="e.g. jane@company.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required>
+          </div>
+          <div id="loginError" class="error-text" style="display: none; background: var(--color-danger-light); color: var(--color-danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500;"></div>
+          <button type="submit" class="btn-primary w-full" id="loginSubmitBtn" style="padding: 14px; font-size: 1.1rem; margin-top: 10px;">Sign In</button>
+        </form>
+
+        <!-- Sign Up Form (Hidden by default) -->
+        <form id="signupForm" class="auth-form" style="display: none;">
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label class="form-label" for="firstName">First Name</label>
+              <input type="text" id="firstName" class="form-input" placeholder="e.g. Jane" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lastName">Last Name</label>
+              <input type="text" id="lastName" class="form-input" placeholder="e.g. Doe" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupEmail">Work Email</label>
+            <input type="email" id="signupEmail" class="form-input" placeholder="jane@company.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" class="form-input" placeholder="••••••••" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="department">Department</label>
+            <select id="department" class="form-input">
+              <option value="HR">Human Resources</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Sales">Sales</option>
+              <option value="Marketing">Marketing</option>
+            </select>
+          </div>
+          
+          <div id="signupError" class="error-text" style="display: none; background: var(--color-danger-light); color: var(--color-danger); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500;"></div>
+          
+          <button type="submit" class="btn-primary w-full" id="signupSubmitBtn" style="padding: 14px; font-size: 1.1rem; margin-top: 10px;">Create Account</button>
+        </form>
+        
+      </div>
+    </main>
+  </div>
+
+  <style>
+    body, html { height: 100%; margin: 0; }
+    .split-layout { display: flex; height: 100vh; }
+    
+    .auth-branding {
+      flex: 1;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+    }
+    
+    .branding-content { position: relative; z-index: 2; }
+    
+    .glow-orb {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    
+    .testimonial {
+      margin-top: 60px;
+      padding: 24px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.9);
+      font-style: italic;
+      max-width: 400px;
+    }
+    .testimonial .author { font-style: normal; font-weight: 600; margin-top: 12px; font-size: 0.9rem; color: #fff;}
+    
+    .auth-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-bg);
+    }
+    
+    .glass-panel {
+      width: 100%;
+      max-width: 480px;
+      padding: 40px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .auth-toggle {
+      display: flex;
+      background: var(--color-border-light);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active {
+      background: white;
+      color: var(--color-text-primary);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 768px) {
+      .auth-branding { display: none; }
+      .split-layout { flex-direction: column; }
+    }
+  </style>
+
+  <script src="assets/js/auth-ui.js"></script>
+</body>
+</html>

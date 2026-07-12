@@ -1,0 +1,127 @@
+/* Results Specific Styles */
+.result-container {
+  max-width: 800px;
+}
+
+.score-card {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-12);
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--color-border);
+  margin-bottom: var(--spacing-10);
+}
+
+.result-title {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-1);
+}
+
+.score-circle-container {
+  display: flex;
+  justify-content: center;
+  margin: var(--spacing-8) 0;
+}
+
+.progress-circle.huge {
+  width: 160px;
+  height: 160px;
+}
+
+.progress-circle.huge span {
+  width: 140px;
+  height: 140px;
+  font-size: 3rem;
+  background-color: var(--color-card-bg);
+  color: var(--color-text-primary);
+}
+
+.profile-name {
+  color: var(--color-accent);
+  font-size: 1.75rem;
+  margin-bottom: var(--spacing-2);
+}
+
+.profile-desc {
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+}
+
+.recommendation-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.rec-card {
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast);
+}
+
+.rec-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.rec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
+.rec-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-high {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.badge-medium {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
+}
+
+.badge-low {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.rec-desc {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Print Styles */
+@media print {
+  .app-header, .action-buttons, .btn-back {
+    display: none !important;
+  }
+  .app-main {
+    background-color: white !important;
+  }
+  .score-card, .rec-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+}

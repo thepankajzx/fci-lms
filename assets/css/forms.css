@@ -1,0 +1,83 @@
+/* Form Container */
+.form-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+/* Base Input Styles */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-inner);
+  transition: all var(--transition-fast);
+}
+
+/* Input Focus States */
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-glow);
+  background-color: var(--color-card-bg);
+}
+
+/* Input Placeholders */
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+}
+
+/* Checkbox and Radio */
+.checkbox-label,
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+}
+
+.form-checkbox,
+.form-radio {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px; /* Circles for radio */
+  background-color: white;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.form-radio {
+  border-radius: 50%;
+}
+
+/* Error States */
+.form-input.error {
+  border-color: var(--color-danger);
+}
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-light);
+}
+.form-error-text {
+  display: block;
+  margin-top: var(--spacing-1);
+  font-size: 0.75rem;
+  color: var(--color-danger);
+}

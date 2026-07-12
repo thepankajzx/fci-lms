@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment - Financial Wellbeing Platform</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/typography.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/forms.css">
+  <link rel="stylesheet" href="assets/css/assessment.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+
+  <!-- JS Files -->
+  <script src="config/apiEndpoints.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/scoring.js"></script>
+  <script src="assets/js/profileEngine.js"></script>
+  <script>
+    window.Auth.requireAuth();
+  </script>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation specific to Assessments -->
+  <header class="assessment-header">
+    <div class="header-content container">
+      <a href="dashboard.html" class="btn-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Save & Exit
+      </a>
+      
+      <div class="progress-container">
+        <div class="progress-text">
+          <span id="questionCounter">Question 1 of 10</span>
+          <span id="progressPercent">10%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBar" style="width: 10%;"></div>
+        </div>
+      </div>
+      
+      <!-- Auto Save indicator -->
+      <div class="auto-save-status" id="saveStatus">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Saved
+      </div>
+    </div>
+  </header>
+
+  <main class="assessment-main">
+    <div class="container assessment-container">
+      
+      <!-- Introduction Screen (Hidden initially, shown by JS if needed) -->
+      <div id="introScreen" class="animate-fade-in-up" style="display: none;">
+        <h1 class="assessment-title" id="assessmentTitle">Loading Assessment...</h1>
+        <p class="assessment-desc" id="assessmentDesc">Please wait while we prepare your assessment.</p>
+        <button id="startBtn" class="btn-primary">Start Assessment</button>
+      </div>
+
+      <!-- Question Engine Renderer -->
+      <div id="questionScreen" class="animate-fade-in-up" style="display: none;">
+        
+        <div class="question-card">
+          <h2 class="question-text" id="questionText">Loading question...</h2>
+          <p class="question-helper" id="questionHelper"></p>
+          
+          <div class="question-options" id="optionsContainer">
+            <!-- Options dynamically rendered here -->
+          </div>
+          
+          <div class="error-message" id="questionError" style="display: none;">Please select an option to continue.</div>
+        </div>
+
+        <div class="navigation-controls">
+          <button id="prevBtn" class="btn-secondary" disabled>Previous</button>
+          <button id="nextBtn" class="btn-primary">Next</button>
+        </div>
+
+      </div>
+      
+      <!-- Completion Screen -->
+      <div id="completionScreen" class="animate-fade-in-up text-center" style="display: none; padding: 4rem 0;">
+        <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <h2>Assessment Completed!</h2>
+        <p style="margin-bottom: 2rem;">We are calculating your personalized results.</p>
+        <button id="viewResultsBtn" class="btn-primary">View My Profile</button>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/assessments.js"></script>
+</body>
+</html>

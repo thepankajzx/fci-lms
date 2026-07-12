@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Wellbeing Assessment</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/typography.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+
+  <style>
+    /* Landing Page Specific Styles */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--spacing-16) var(--spacing-6);
+      background: linear-gradient(135deg, var(--color-bg) 0%, #E0F2FE 100%);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      max-width: 800px;
+      margin-bottom: var(--spacing-6);
+      letter-spacing: -0.03em;
+      animation: fade-in-up 0.8s var(--transition-normal);
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin-bottom: var(--spacing-8);
+      animation: fade-in-up 0.8s var(--transition-normal) 0.1s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary);
+      color: white;
+      padding: var(--spacing-4) var(--spacing-8);
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+      box-shadow: var(--shadow-md);
+      animation: fade-in-up 0.8s var(--transition-normal) 0.2s both;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-4) var(--spacing-8);
+      background-color: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-sticky);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      fill: var(--color-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: var(--spacing-6);
+    }
+
+    .nav-link {
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: color var(--transition-fast);
+    }
+
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+
+    .btn-login {
+      background-color: var(--color-card-bg);
+      border: 1px solid var(--color-border);
+      padding: var(--spacing-2) var(--spacing-4);
+      border-radius: var(--radius-full);
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-login:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+  
+  <nav class="navbar">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      Wellbeing Platform
+    </div>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Features</a>
+      <a href="#" class="nav-link">Assessments</a>
+      <a href="login.html" class="btn-login">Sign In</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <h1>Understand your financial health today.</h1>
+      <p>A premium platform designed to assess, understand, and improve the financial wellbeing of your team through structured insights.</p>
+      <a href="login.html" class="btn-primary">
+        Get Started
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 8px;">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </section>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+/* Admin Specific Styles */
+
+.admin-section {
+  background-color: var(--color-card-bg);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-8);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  margin-bottom: var(--spacing-8);
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-light);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: var(--color-bg);
+  padding: var(--spacing-4) var(--spacing-6);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table td {
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+}
+
+.admin-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.admin-table tbody tr:hover {
+  background-color: var(--color-bg);
+}
+
+/* Badge specific for Admin Table */
+.admin-table .badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.admin-table .badge-high {
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+}
+
+.admin-table .badge-medium {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
+}
+
+.admin-table .badge-low {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
+}
