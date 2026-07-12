@@ -23,17 +23,29 @@
             --text-muted: #475569;
             
             /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
             
             /* Typography */
             --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
             
             /* Transitions */
             --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
             --transition-smooth: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-base: #0B0F19;
+            --bg-card: #111827;
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --border: #1F2937;
+            --primary: #3B82F6;
         }
 
         * {
@@ -587,9 +599,22 @@
                 <a href="#solutions">Solutions</a>
                 <a href="#about">About</a>
             </div>
-            <div class="nav-actions">
-                <a href="login.html" class="login-link">Sign in</a>
-                <a href="login.html" class="btn btn-primary">Book Demo</a>
+            <div class="nav-actions" id="navActions">
+                <!-- Logged Out State -->
+                <div id="loggedOutNav" style="display: flex; gap: 12px; align-items: center;">
+                    <a href="login.html" class="login-link">Sign in</a>
+                    <a href="login.html" class="btn btn-primary">Book Demo</a>
+                </div>
+                <!-- Logged In State (Hidden by default) -->
+                <div id="loggedInNav" style="display: none; gap: 12px; align-items: center;">
+                    <button class="theme-toggle-btn" id="indexThemeToggle" title="Toggle Dark Mode" style="background:none; border:none; cursor:pointer; color:var(--text-main); display:flex; align-items:center;">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <button id="myArsenalBtn" class="btn btn-primary" style="padding: 8px 16px;">My Arsenal</button>
+                    <div id="userProfileIcon" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; font-size: 14px;">
+                        U
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -883,6 +908,58 @@
                         }
                     });
                 });
+            });
+        });
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-init.js"></script>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check auth state silently
+            const session = window.StorageHelper.get('session');
+            if (session && session.user) {
+                // User is logged in
+                document.getElementById('loggedOutNav').style.display = 'none';
+                document.getElementById('loggedInNav').style.display = 'flex';
+                
+                const user = session.user;
+                const profileIcon = document.getElementById('userProfileIcon');
+                if(user.firstName) {
+                    profileIcon.textContent = user.firstName.charAt(0).toUpperCase();
+                }
+
+                document.getElementById('myArsenalBtn').addEventListener('click', () => {
+                    if (user.role === 'Admin' || user.role === 'HR') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                });
+            }
+
+            // Dark Mode Logic
+            const themeToggle = document.getElementById('indexThemeToggle');
+            const root = document.documentElement;
+            let isDark = localStorage.getItem('theme') === 'dark';
+            
+            if(isDark) root.setAttribute('data-theme', 'dark');
+
+            themeToggle.addEventListener('click', () => {
+                isDark = !isDark;
+                if(isDark) {
+                    root.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeToggle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>';
+                } else {
+                    root.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    themeToggle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>';
+                }
             });
         });
     </script>

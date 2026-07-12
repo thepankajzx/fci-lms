@@ -1,273 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard - Financial Wellbeing Platform</title>
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/reset.css">
-  <link rel="stylesheet" href="assets/css/variables.css">
-  <link rel="stylesheet" href="assets/css/typography.css">
-  <link rel="stylesheet" href="assets/css/layout.css">
-  <link rel="stylesheet" href="assets/css/dashboard.css">
-  <link rel="stylesheet" href="assets/css/admin.css">
-  <link rel="stylesheet" href="assets/css/animations.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Financial Wellbeing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- JS Files -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="assets/js/firebase-init.js"></script>
-  <script src="assets/js/storage.js"></script>
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/auth.js"></script>
-  <script>
-    window.Auth.requireAuth();
-    const user = window.Auth.getUser();
-    if (user && user.role !== 'Admin' && user.role !== 'HR') {
-      // Force redirect non-admins back to dashboard
-      window.location.href = 'dashboard.html'; 
-    }
-  </script>
+    <!-- Firebase & Custom Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-init.js"></script>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+
+    <style>
+        :root {
+            /* Light Theme */
+            --bg-body: #F8FAFC;
+            --bg-surface: #FFFFFF;
+            --bg-surface-hover: #F1F5F9;
+            --text-primary: #0F172A;
+            --text-secondary: #64748B;
+            --text-tertiary: #94A3B8;
+            --border-color: #E2E8F0;
+            
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --primary-light: #EEF2FF;
+            
+            --success: #10B981;
+            --success-bg: #D1FAE5;
+            --success-text: #065F46;
+            
+            --warning: #F59E0B;
+            --warning-bg: #FEF3C7;
+            --warning-text: #92400E;
+            
+            --danger: #EF4444;
+            --danger-bg: #FEE2E2;
+            --danger-text: #991B1B;
+
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0B0F19;
+            --bg-surface: #111827;
+            --bg-surface-hover: #1F2937;
+            --text-primary: #F9FAFB;
+            --text-secondary: #9CA3AF;
+            --border-color: #1F2937;
+            --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --primary-light: rgba(79, 70, 229, 0.15);
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --success-text: #34D399;
+            --warning-bg: rgba(245, 158, 11, 0.15);
+            --warning-text: #FBBF24;
+            --danger-bg: rgba(239, 68, 68, 0.15);
+            --danger-text: #F87171;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        /* Typography & Buttons */
+        h1, h2, h3, h4 { font-weight: 600; letter-spacing: -0.02em; }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: var(--shadow-sm); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-outline { background: var(--bg-surface); border-color: var(--border-color); color: var(--text-primary); }
+        .btn-outline:hover { background: var(--bg-surface-hover); }
+        .btn-icon { padding: 0.5rem; background: transparent; border: none; color: var(--text-secondary); border-radius: var(--radius-md); cursor: pointer; }
+        .btn-icon:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+        .menu-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 1rem 0 0.5rem 0.75rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link svg { width: 18px; height: 18px; }
+        .nav-link:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
+        .nav-link.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+        .nav-link.active svg { stroke: var(--primary); }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TOP NAVBAR */
+        .topbar {
+            height: var(--header-height);
+            width: 100%;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 1.5rem; }
+        .topbar-right { display: flex; align-items: center; gap: 1rem; }
+
+        .org-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-surface-hover);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .search-container {
+            position: relative;
+            width: 320px;
+        }
+        .search-container svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            width: 16px; height: 16px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.25rem;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-container input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+        .avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.875rem; font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* DASHBOARD CONTENT */
+        .content-area {
+            padding: 2rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+        .page-header h1 { font-size: 1.5rem; color: var(--text-primary); }
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+            width: 100%;
+        }
+        
+        .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .kpi-title { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); }
+        .kpi-icon { padding: 0.5rem; background: var(--bg-surface-hover); border-radius: var(--radius-md); color: var(--primary); }
+        .kpi-icon svg { width: 20px; height: 20px; }
+        
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .kpi-trend {
+            font-size: 0.8125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--danger); }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .chart-card { display: flex; flex-direction: column; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .chart-header h3 { font-size: 1rem; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
+
+        /* Data Table */
+        .table-card { padding: 0; overflow: hidden; width: 100%; }
+        .table-toolbar {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .table-filters { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .filter-select {
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 16px;
+            outline: none;
+        }
+
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 1rem 1.5rem; text-align: left; }
+        .data-table th {
+            background: var(--bg-surface-hover);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .data-table td { font-size: 0.875rem; border-bottom: 1px solid var(--border-color); }
+        .data-table tbody tr:hover { background: var(--bg-surface-hover); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+
+        .user-cell { display: flex; align-items: center; gap: 0.75rem; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.75rem; color: #475569;}
+        .user-info { display: flex; flex-direction: column; }
+        .user-name { font-weight: 500; color: var(--text-primary); }
+        .user-email { color: var(--text-tertiary); font-size: 0.8125rem; }
+
+        .badge {
+            display: inline-flex; padding: 0.25rem 0.625rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .badge.success { background: var(--success-bg); color: var(--success-text); }
+        .badge.warning { background: var(--warning-bg); color: var(--warning-text); }
+        .badge.danger { background: var(--danger-bg); color: var(--danger-text); }
+        .badge.neutral { background: var(--bg-surface-hover); color: var(--text-secondary); border: 1px solid var(--border-color);}
+
+        .table-pagination {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .pagination-controls { display: flex; gap: 0.5rem; }
+
+        @media (max-width: 1024px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="app-layout">
-    
-    <!-- Sidebar Navigation -->
-    <aside class="app-sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <span class="logo-text">Admin Panel</span>
-      </div>
-      
-      <nav class="sidebar-nav">
-        <a href="#" id="navOverview" class="nav-item active">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-          Overview
-        </a>
-        <a href="#" id="navManageUsers" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          Manage Users
-        </a>
-        <a href="#" id="navManageCourses" class="nav-item">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          Manage Courses
-        </a>
-      </nav>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="brand">
+                <div class="brand-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                FCI Admin
+            </a>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <div class="menu-label">Overview</div>
+            <a href="#" class="nav-link active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                Dashboard
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Analytics
+            </a>
+            
+            <div class="menu-label">Management</div>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                Users
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                Departments
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                Assessments
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                Question Bank
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Reports
+            </a>
+            
+            <div class="menu-label">System</div>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                Notifications
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </a>
+            <a href="#" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Activity Logs
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#" class="nav-link" id="logoutBtn" style="color: var(--danger);">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Logout
+            </a>
+        </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <main class="app-main">
-      <header class="app-header">
-        <h2 class="header-title">Admin & HR Overview</h2>
-      </header>
-
-      <div class="app-content">
+    <!-- Main Wrapper -->
+    <main class="main-wrapper">
         
-        <!-- View: OVERVIEW -->
-        <div id="viewOverview" class="admin-view active">
-          <!-- Summary Metrics -->
-          <div class="stats-grid animate-fade-in-up">
-            <div class="stat-card">
-              <div class="stat-title">Total Users</div>
-              <div class="stat-value" id="totalUsers">-</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-title">Completed Assessments</div>
-              <div class="stat-value text-success" id="totalCompleted">-</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-title">Avg. Org Wellbeing</div>
-              <div class="stat-value text-warning" id="avgScore">-</div>
-            </div>
-          </div>
-
-          <!-- Data Table -->
-          <section class="admin-section animate-fade-in-up" style="animation-delay: 0.1s;">
-            <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-4);">
-              <h3 class="section-title" style="margin: 0;">Recent Employee Completions</h3>
-              <button class="btn-secondary" onclick="window.print()">Export CSV</button>
-            </div>
-            
-            <div class="table-container">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Employee</th>
-                    <th>Department</th>
-                    <th>Assessment</th>
-                    <th>Score</th>
-                    <th>Profile</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody id="completionTableBody">
-                  <!-- Data injected via JS -->
-                </tbody>
-              </table>
-            </div>
-          </section>
-        </div>
-
-        <!-- View: MANAGE USERS -->
-        <div id="viewManageUsers" class="admin-view" style="display: none;">
-          <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-6);">
-            <h3 class="section-title" style="margin: 0;">User Directory</h3>
-            <button class="btn-primary" id="openAddUserModalBtn">+ Add New User</button>
-          </div>
-          
-          <div class="table-container animate-fade-in-up">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Department</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="userDirectoryBody">
-                <!-- Data injected via JS -->
-                <tr><td colspan="6" class="text-center">Loading users...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- View: MANAGE COURSES -->
-        <div id="viewManageCourses" class="admin-view" style="display: none;">
-          <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-6);">
-            <h3 class="section-title" style="margin: 0;">Course Catalog</h3>
-            <button class="btn-primary" id="openCourseBuilderBtn">+ Create Course</button>
-          </div>
-          <div class="table-container animate-fade-in-up">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="courseDirectoryBody">
-                <tr><td colspan="5" class="text-center">Loading courses...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- View: COURSE BUILDER -->
-        <div id="viewCourseBuilder" class="admin-view" style="display: none;">
-          <div class="flex justify-between items-center" style="margin-bottom: var(--spacing-6);">
-            <h3 class="section-title" style="margin: 0;">Course Builder</h3>
-            <button class="btn-secondary" id="backToCoursesBtn">Back to Catalog</button>
-          </div>
-          
-          <div class="card animate-fade-in-up" style="padding: 24px; background: var(--color-bg-card); border-radius: var(--radius-md); border: 1px solid var(--color-border);">
-            <form id="courseBuilderForm">
-              <!-- Course Meta -->
-              <h4 style="margin-top: 0; margin-bottom: 16px;">Course Information</h4>
-              <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
-                <div class="form-group">
-                  <label class="form-label">Course Title</label>
-                  <input type="text" id="cbTitle" class="form-input" required placeholder="e.g. Cybersecurity 101">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="search-container">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" placeholder="Search employees, assessments, reports...">
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Category</label>
-                  <select id="cbCategory" class="form-input">
-                    <option value="Compliance">Compliance</option>
-                    <option value="Technical">Technical</option>
-                    <option value="Soft Skills">Soft Skills</option>
-                    <option value="General">General</option>
-                  </select>
+            </div>
+            <div class="topbar-right">
+                <div class="org-selector">
+                    Acme Corp (Global)
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Description</label>
-                <textarea id="cbDescription" class="form-input" rows="3" placeholder="Brief description of the course..."></textarea>
-              </div>
-              
-              <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 32px 0;">
-              
-              <!-- Questions Section -->
-              <div class="flex justify-between items-center" style="margin-bottom: 16px;">
-                <h4 style="margin: 0;">Assessments & Questions</h4>
-                <button type="button" class="btn-secondary" id="addQuestionBtn" style="padding: 6px 12px; font-size: 0.875rem;">+ Add Question</button>
-              </div>
-              
-              <div id="questionsContainer" style="display: flex; flex-direction: column; gap: 24px;">
-                <!-- Questions will be injected here by admin.js -->
-              </div>
-              
-              <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 32px 0;">
-              
-              <div style="display: flex; justify-content: flex-end; gap: 16px;">
-                <button type="button" class="btn-secondary" id="cancelCourseBtn">Cancel</button>
-                <button type="submit" class="btn-primary" id="saveCourseBtn">Publish Course</button>
-              </div>
-            </form>
-          </div>
-        </div>
+                <button class="btn-icon" id="themeToggle" title="Toggle Dark Mode">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+                <button class="btn-icon" style="position:relative;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span style="position:absolute; top:4px; right:6px; width:8px; height:8px; background:var(--danger); border-radius:50%; border:2px solid var(--bg-surface);"></span>
+                </button>
+                <div class="avatar" id="adminAvatar">AD</div>
+            </div>
+        </header>
 
-      </div>
+        <!-- Page Content -->
+        <div class="content-area">
+            <div class="page-header">
+                <div>
+                    <h1>Dashboard Overview</h1>
+                    <p style="color: var(--text-secondary); font-size: 0.9375rem; margin-top: 0.25rem;">Enterprise organizational financial health summary.</p>
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <button class="btn btn-outline">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Last 30 Days
+                    </button>
+                    <button class="btn btn-primary">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Export Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="card kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Total Employees</span>
+                        <div class="kpi-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                    </div>
+                    <div class="kpi-value counter" data-target="2450">0</div>
+                    <div class="kpi-trend trend-up"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> +124 this month</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Avg. Financial Health</span>
+                        <div class="kpi-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                    </div>
+                    <div class="kpi-value"><span class="counter" data-target="72">0</span>/100</div>
+                    <div class="kpi-trend trend-up"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> +2.4 points</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Assessments Completed</span>
+                        <div class="kpi-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></div>
+                    </div>
+                    <div class="kpi-value counter" data-target="1842">0</div>
+                    <div class="kpi-trend" style="color: var(--text-tertiary);">75% Completion Rate</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-header">
+                        <span class="kpi-title">Employees at High Risk</span>
+                        <div class="kpi-icon" style="color: var(--danger); background: var(--danger-bg);"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
+                    </div>
+                    <div class="kpi-value counter" data-target="156">0</div>
+                    <div class="kpi-trend trend-down"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg> -12 from last month</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="card chart-card">
+                    <div class="chart-header">
+                        <h3>Assessment Completion Trend</h3>
+                        <button class="btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="completionChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <div class="chart-header">
+                        <h3>Org Risk Distribution</h3>
+                        <button class="btn-icon"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg></button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table (HR Insights / User Management) -->
+            <div class="card table-card">
+                <div class="table-toolbar">
+                    <h3 style="font-size: 1.125rem;">Employee Insights & Status</h3>
+                    <div class="table-filters">
+                        <select class="filter-select">
+                            <option>All Departments</option>
+                            <option>Engineering</option>
+                            <option>Sales</option>
+                            <option>Marketing</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Filter by Risk</option>
+                            <option>High Risk</option>
+                            <option>Medium Risk</option>
+                            <option>Low Risk</option>
+                        </select>
+                        <button class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            Assign Assessment
+                        </button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Latest Assessment</th>
+                                <th>Score</th>
+                                <th>Risk Level</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">SL</div>
+                                        <div class="user-info">
+                                            <span class="user-name">Sarah Lewis</span>
+                                            <span class="user-email">sarah.l@acmecorp.com</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Engineering</td>
+                                <td>Q3 Financial Basics</td>
+                                <td><span style="font-weight: 600;">88</span>/100</td>
+                                <td><span class="badge success">Low Risk</span></td>
+                                <td style="text-align: right;">
+                                    <button class="btn-icon">...</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">MR</div>
+                                        <div class="user-info">
+                                            <span class="user-name">Michael Rodriguez</span>
+                                            <span class="user-email">m.rodriguez@acmecorp.com</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Sales</td>
+                                <td>Debt Management 101</td>
+                                <td><span style="font-weight: 600;">45</span>/100</td>
+                                <td><span class="badge danger">High Risk</span></td>
+                                <td style="text-align: right;">
+                                    <button class="btn-icon">...</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">AK</div>
+                                        <div class="user-info">
+                                            <span class="user-name">Aisha Khan</span>
+                                            <span class="user-email">akhan@acmecorp.com</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Marketing</td>
+                                <td>Retirement Planning</td>
+                                <td><span style="font-weight: 600;">62</span>/100</td>
+                                <td><span class="badge warning">Medium Risk</span></td>
+                                <td style="text-align: right;">
+                                    <button class="btn-icon">...</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar">DJ</div>
+                                        <div class="user-info">
+                                            <span class="user-name">David Jung</span>
+                                            <span class="user-email">david.j@acmecorp.com</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Engineering</td>
+                                <td>Q3 Financial Basics</td>
+                                <td>-</td>
+                                <td><span class="badge neutral">Pending</span></td>
+                                <td style="text-align: right;">
+                                    <button class="btn-icon">...</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-pagination">
+                    <span>Showing 1 to 4 of 2,450 entries</span>
+                    <div class="pagination-controls">
+                        <button class="btn btn-outline" disabled>Previous</button>
+                        <button class="btn btn-outline">Next</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </main>
-  </div>
 
-  <!-- Add User Modal -->
-  <div id="addUserModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; display: flex; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
-    <div class="modal-content" style="background: white; padding: 32px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-      <h3 style="margin-top: 0; margin-bottom: 24px; font-size: 1.5rem;">Add New User</h3>
-      <form id="addUserForm" class="auth-form">
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div class="form-group">
-            <label class="form-label">First Name</label>
-            <input type="text" id="addFirstName" class="form-input" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Last Name</label>
-            <input type="text" id="addLastName" class="form-input" required>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email / Employee ID</label>
-          <input type="text" id="addEmail" class="form-input" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="text" id="addPassword" class="form-input" required>
-        </div>
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-          <div class="form-group">
-            <label class="form-label">Role</label>
-            <select id="addRole" class="form-input">
-              <option value="Employee">Employee</option>
-              <option value="Instructor">Instructor</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Department</label>
-            <select id="addDept" class="form-input">
-              <option value="HR">HR</option>
-              <option value="Engineering">Engineering</option>
-              <option value="Sales">Sales</option>
-            </select>
-          </div>
-        </div>
-        <div id="addUserError" class="error-text" style="display: none; color: red; margin-bottom: 16px;"></div>
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-          <button type="button" id="closeAddUserBtn" class="btn-secondary">Cancel</button>
-          <button type="submit" id="submitAddUserBtn" class="btn-primary">Create User</button>
-        </div>
-      </form>
-    </div>
-  </div>
+    <script>
+        // Auth Logic
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await window.Auth.requireAuth(['Admin', 'HR']);
+            if(user) {
+                const avatar = document.getElementById('adminAvatar');
+                if(avatar) {
+                    avatar.textContent = user.firstName ? user.firstName.charAt(0).toUpperCase() : 'A';
+                }
+            }
+            
+            const logoutBtn = document.getElementById('logoutBtn');
+            if(logoutBtn) {
+                logoutBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await window.Auth.logout();
+                });
+            }
+        });
 
-  <script src="assets/js/admin.js"></script>
+        // 1. Theme Toggle Logic
+        const themeToggle = document.getElementById('themeToggle');
+        const root = document.documentElement;
+        let isDark = false;
+
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            if(isDark) {
+                root.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>';
+            } else {
+                root.removeAttribute('data-theme');
+                themeToggle.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>';
+            }
+            updateChartsTheme();
+        });
+
+        // 2. Animated Counters
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200; 
+
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 15);
+                } else {
+                    counter.innerText = target.toLocaleString();
+                }
+            };
+            updateCount();
+        });
+
+        // 3. Chart.js Setup
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748B';
+        
+        let completionChart, riskChart;
+
+        function initCharts() {
+            const ctx1 = document.getElementById('completionChart').getContext('2d');
+            
+            let gradient = ctx1.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
+            gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
+
+            completionChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Assessments Completed',
+                        data: [400, 650, 800, 1200, 1500, 1842],
+                        borderColor: '#4F46E5',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        tension: 0.4, 
+                        fill: true,
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#4F46E5',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [4, 4], color: '#E2E8F0', drawBorder: false } },
+                        x: { grid: { display: false, drawBorder: false } }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                }
+            });
+
+            const ctx2 = document.getElementById('riskChart').getContext('2d');
+            riskChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                    datasets: [{
+                        data: [65, 25, 10],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                    }
+                }
+            });
+        }
+
+        function updateChartsTheme() {
+            const gridColor = isDark ? '#1F2937' : '#E2E8F0';
+            const textColor = isDark ? '#9CA3AF' : '#64748B';
+            
+            if (completionChart) {
+                completionChart.options.scales.y.grid.color = gridColor;
+                completionChart.options.scales.y.ticks.color = textColor;
+                completionChart.options.scales.x.ticks.color = textColor;
+                completionChart.update();
+            }
+
+            if (riskChart) {
+                riskChart.options.plugins.legend.labels.color = textColor;
+                riskChart.update();
+            }
+        }
+
+        initCharts();
+    </script>
 </body>
 </html>

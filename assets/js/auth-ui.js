@@ -49,12 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error("You do not have Administrator privileges.");
       }
 
-      // Route based on role
-      if (user.role === 'Admin' || user.role === 'HR') {
-        window.location.href = 'admin.html';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
+      // Route based on role is now handled globally on index.html
+      // Just redirect everyone to the landing page
+      window.location.href = 'index.html';
     } catch (error) {
       err.textContent = error.message;
       err.style.display = 'block';
@@ -96,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.Auth.session = sessionData;
         window.StorageHelper.set('session', sessionData);
         
-        // Auto-route to employee dashboard
-        window.location.href = 'dashboard.html';
+        // Auto-route to landing page
+        window.location.href = 'index.html';
       }
     } catch (error) {
       err.textContent = 'Failed to create account: ' + (error.message || 'Unknown error');
