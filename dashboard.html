@@ -523,9 +523,10 @@
         }
 
         @media (max-width: 1024px) {
-            .sidebar { left: -100%; }
+            .sidebar { left: -100%; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
             .sidebar.active { left: 0; }
-            .sidebar-overlay.active { display: block; }
+            .sidebar-overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; display: block; }
+            .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
             .mobile-toggle { display: block; }
             .main-wrapper { margin-left: 0; width: 100%; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -534,6 +535,36 @@
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: 1fr; }
             .dashboard-grid { grid-template-columns: 1fr; }
+            .content { padding: 1.25rem 1rem; }
+            .topbar { padding: 0 1rem; }
+            
+            /* Mobile Cards for Data Table */
+            .table-responsive { overflow: visible; }
+            .data-table { min-width: 0; border: none; }
+            .data-table thead { display: none; }
+            .data-table tbody tr {
+                display: block;
+                background: var(--bg-surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                margin-bottom: 1rem;
+                padding: 1rem;
+            }
+            .data-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border);
+            }
+            .data-table td:last-child { border-bottom: none; }
+            .data-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-muted);
+                margin-right: 1rem;
+            }
+            .data-table td > div { text-align: right; }
         }
     </style>
 </head>
@@ -644,7 +675,7 @@
                             <h2>Assigned Assessments</h2>
                             <a href="#" class="card-action">View All</a>
                         </div>
-                        <div style="overflow-x: auto; width: 100%;">
+                        <div class="table-responsive">
                             <table class="data-table">
                                 <thead>
                                     <tr>
@@ -654,26 +685,26 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="assessment-title">Q3 Cybersecurity Compliance</div>
-                                        <div class="assessment-meta">Duration: 15 mins</div>
-                                    </td>
-                                    <td>Oct 15, 2026</td>
-                                    <td><span class="badge pending">Pending</span></td>
-                                    <td><button class="btn-table primary">Start</button></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="assessment-title">Leadership Core Values</div>
-                                        <div class="assessment-meta">Duration: 30 mins</div>
-                                    </td>
-                                    <td>Oct 20, 2026</td>
-                                    <td><span class="badge pending">Pending</span></td>
-                                    <td><button class="btn-table primary">Start</button></td>
-                                </tr>
-                            </tbody>
+                                <tbody>
+                                    <tr>
+                                        <td data-label="Assessment Title">
+                                            <div class="assessment-title">Q3 Cybersecurity Compliance</div>
+                                            <div class="assessment-meta">Duration: 15 mins</div>
+                                        </td>
+                                        <td data-label="Due Date">Oct 15, 2026</td>
+                                        <td data-label="Status"><span class="badge pending">Pending</span></td>
+                                        <td data-label="Action"><button class="btn-table primary">Start</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td data-label="Assessment Title">
+                                            <div class="assessment-title">Annual Ethics Training</div>
+                                            <div class="assessment-meta">Duration: 30 mins</div>
+                                        </td>
+                                        <td data-label="Due Date">Oct 20, 2026</td>
+                                        <td data-label="Status"><span class="badge pending">Pending</span></td>
+                                        <td data-label="Action"><button class="btn-table primary">Start</button></td>
+                                    </tr>
+                                </tbody>
                         </table>
                         </div>
                     </div>

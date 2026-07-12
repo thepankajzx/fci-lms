@@ -583,42 +583,53 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 0 1.5rem; }
-            .nav-inner { flex-wrap: wrap; align-content: flex-start; }
-            .logo { height: var(--nav-height); display: flex; align-items: center; }
-            .mobile-menu-btn { display: flex; align-items: center; height: var(--nav-height); margin-left: auto; }
+            .container { padding: 0 1.25rem; }
+            .nav-inner { flex-wrap: nowrap; }
+            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; }
             
-            .nav-links { 
-                display: none; 
-                width: 100%; 
-                flex-direction: column; 
-                padding: 1rem 0;
-                gap: 1rem;
-                background: var(--bg-surface);
-            }
-            .nav-actions {
-                display: none;
-                width: 100%;
-                justify-content: flex-start;
-                padding-bottom: 1rem;
-                background: var(--bg-surface);
-            }
-            .nav-links.active, .nav-actions.active {
+            /* Full screen mobile overlay */
+            .nav-links, .nav-actions {
                 display: flex;
+                flex-direction: column;
+                position: fixed;
+                left: -100%;
+                width: 80%;
+                max-width: 320px;
+                background: var(--bg-card);
+                transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                padding: 2rem;
+                z-index: 100;
+                box-shadow: var(--shadow-xl);
             }
+
+            .nav-links { top: 0; height: 100vh; padding-top: calc(var(--nav-height) + 2rem); }
+            .nav-actions { top: auto; bottom: 0; left: -100%; padding-bottom: calc(env(safe-area-inset-bottom) + 2rem); border-top: 1px solid var(--border); }
             
-            .bento-grid { grid-template-columns: 1fr; }
+            .nav-links.active, .nav-actions.active { left: 0; }
+            
+            /* Overlay shadow behind the menu */
+            .mobile-overlay {
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+                z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            }
+            .mobile-overlay.active { opacity: 1; pointer-events: auto; }
+            
+            .bento-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .bento-card { padding: 1.5rem; }
             .timeline { flex-direction: column; gap: 2rem; }
             .timeline::before { display: none; }
             .timeline-step { width: 100%; }
             .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .ui-mockup { height: 300px; }
+            .ui-mockup { height: 260px; border-radius: 12px; }
             .mockup-sidebar { display: none; }
-            .hero { padding-top: calc(var(--nav-height) + 2rem); }
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1.125rem; }
-            .hero-actions { flex-direction: column; }
+            
+            .hero { padding-top: calc(var(--nav-height) + 2rem); padding-bottom: 3rem; }
+            .hero h1 { font-size: clamp(2.25rem, 8vw, 3rem); line-height: 1.1; }
+            .hero p { font-size: 1rem; padding: 0 0.5rem; }
+            .hero-actions { flex-direction: column; gap: 1rem; width: 100%; }
             .btn { width: 100%; justify-content: center; }
+            .section-header h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); }
         }
     </style>
 </head>
@@ -635,6 +646,8 @@
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
+
+            <div class="mobile-overlay" id="mobileOverlay"></div>
 
             <div class="nav-links" id="navLinks">
                 <a href="#platform">Platform</a>
@@ -1005,16 +1018,23 @@
                 }
             });
 
-            // Mobile Menu Toggle
+            // Mobile Menu Toggle logic
             const mobileBtn = document.getElementById('mobileMenuBtn');
             const navLinks = document.getElementById('navLinks');
             const navActions = document.getElementById('navActions');
-            
-            if (mobileBtn) {
-                mobileBtn.addEventListener('click', () => {
-                    navLinks.classList.toggle('active');
-                    navActions.classList.toggle('active');
-                });
+            const mobileOverlay = document.getElementById('mobileOverlay');
+
+            function toggleMobileMenu() {
+                navLinks.classList.toggle('active');
+                navActions.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+            }
+
+            if(mobileBtn) {
+                mobileBtn.addEventListener('click', toggleMobileMenu);
+            }
+            if(mobileOverlay) {
+                mobileOverlay.addEventListener('click', toggleMobileMenu);
             }
         });
     </script>

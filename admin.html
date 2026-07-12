@@ -446,9 +446,10 @@
         }
 
         @media (max-width: 1024px) {
-            .sidebar { left: -100%; }
+            .sidebar { left: -100%; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
             .sidebar.active { left: 0; }
-            .sidebar-overlay.active { display: block; }
+            .sidebar-overlay { transition: opacity 0.3s; opacity: 0; pointer-events: none; display: block; }
+            .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
             .mobile-toggle { display: block; }
             .main-wrapper { margin-left: 0; width: 100%; }
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -457,10 +458,40 @@
 
         @media (max-width: 768px) {
             .kpi-grid { grid-template-columns: 1fr; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .content-area { padding: 1.25rem 1rem; }
             .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
             .topbar { padding: 0 1rem; }
-            .content-area { padding: 1rem; }
             .org-selector { display: none; }
+            
+            /* Mobile Cards for Data Table */
+            .table-card { overflow: visible; }
+            .data-table { min-width: 0; border: none; }
+            .data-table thead { display: none; }
+            .data-table tbody tr {
+                display: block;
+                background: var(--bg-surface);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+                margin-bottom: 1rem;
+                padding: 1rem;
+            }
+            .data-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+                text-align: right !important;
+            }
+            .data-table td:last-child { border-bottom: none; }
+            .data-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-secondary);
+                margin-right: 1rem;
+                text-align: left;
+            }
         }
     </style>
 </head>
@@ -646,26 +677,17 @@
                     </div>
                 </div>
 
-                <!-- Data Table (HR Insights / User Management) -->
+                <!-- Data Table -->
                 <div class="card table-card">
                     <div class="table-toolbar">
-                        <h3 style="font-size: 1.125rem;">Employee Insights & Status</h3>
+                        <h3 style="font-size: 1.125rem;">Recent Assessments</h3>
                         <div class="table-filters">
                             <select class="filter-select">
                                 <option>All Departments</option>
-                                <option>Engineering</option>
-                                <option>Sales</option>
-                                <option>Marketing</option>
-                            </select>
-                            <select class="filter-select">
-                                <option>Filter by Risk</option>
-                                <option>High Risk</option>
-                                <option>Medium Risk</option>
-                                <option>Low Risk</option>
                             </select>
                             <button class="btn btn-primary" style="padding: 0.5rem 1rem;">
                                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                Assign Assessment
+                                Add Module
                             </button>
                         </div>
                     </div>
@@ -673,84 +695,34 @@
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Employee</th>
-                                    <th>Department</th>
-                                    <th>Latest Assessment</th>
-                                    <th>Score</th>
-                                    <th>Risk Level</th>
-                                    <th style="text-align: right;">Actions</th>
+                                    <th>Module Name</th>
+                                    <th>Enrolled</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-avatar">SL</div>
-                                            <div class="user-info">
-                                                <span class="user-name">Sarah Lewis</span>
-                                                <span class="user-email">sarah.l@acmecorp.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Engineering</td>
-                                    <td>Q3 Financial Basics</td>
-                                    <td><span style="font-weight: 600;">88</span>/100</td>
-                                    <td><span class="badge success">Low Risk</span></td>
-                                    <td style="text-align: right;">
+                                    <td data-label="Module Name">Q3 Financial Basics</td>
+                                    <td data-label="Enrolled">450</td>
+                                    <td data-label="Status"><span class="badge success">Active</span></td>
+                                    <td data-label="Action" style="text-align: right;">
                                         <button class="btn-icon">...</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-avatar">MR</div>
-                                            <div class="user-info">
-                                                <span class="user-name">Michael Rodriguez</span>
-                                                <span class="user-email">m.rodriguez@acmecorp.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Sales</td>
-                                    <td>Debt Management 101</td>
-                                    <td><span style="font-weight: 600;">45</span>/100</td>
-                                    <td><span class="badge danger">High Risk</span></td>
-                                    <td style="text-align: right;">
+                                    <td data-label="Module Name">Cybersecurity 101</td>
+                                    <td data-label="Enrolled">1,200</td>
+                                    <td data-label="Status"><span class="badge success">Active</span></td>
+                                    <td data-label="Action" style="text-align: right;">
                                         <button class="btn-icon">...</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-avatar">AK</div>
-                                            <div class="user-info">
-                                                <span class="user-name">Aisha Khan</span>
-                                                <span class="user-email">akhan@acmecorp.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Marketing</td>
-                                    <td>Retirement Planning</td>
-                                    <td><span style="font-weight: 600;">62</span>/100</td>
-                                    <td><span class="badge warning">Medium Risk</span></td>
-                                    <td style="text-align: right;">
-                                        <button class="btn-icon">...</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="user-cell">
-                                            <div class="user-avatar">DJ</div>
-                                            <div class="user-info">
-                                                <span class="user-name">David Jung</span>
-                                                <span class="user-email">david.j@acmecorp.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>Engineering</td>
-                                    <td>Q3 Financial Basics</td>
-                                    <td>-</td>
-                                    <td><span class="badge neutral">Pending</span></td>
-                                    <td style="text-align: right;">
+                                    <td data-label="Module Name">Q3 Financial Basics</td>
+                                    <td data-label="Enrolled">-</td>
+                                    <td data-label="Status"><span class="badge neutral">Pending</span></td>
+                                    <td data-label="Action" style="text-align: right;">
                                         <button class="btn-icon">...</button>
                                     </td>
                                 </tr>
