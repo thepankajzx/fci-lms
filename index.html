@@ -571,16 +571,48 @@
             .hero h1 { font-size: 3.5rem; }
         }
 
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 4px;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 0 1.5rem; }
-            .nav-links, .login-link { display: none; }
+            .nav-inner { flex-wrap: wrap; }
+            .nav-links { 
+                display: none; 
+                width: 100%; 
+                flex-direction: column; 
+                padding: 1rem 0;
+                gap: 1rem;
+            }
+            .nav-actions {
+                display: none;
+                width: 100%;
+                justify-content: flex-start;
+                padding-bottom: 1rem;
+            }
+            .nav-links.active, .nav-actions.active {
+                display: flex;
+            }
+            .mobile-menu-btn { display: block; margin-left: auto; }
+            
             .bento-grid { grid-template-columns: 1fr; }
             .timeline { flex-direction: column; gap: 2rem; }
             .timeline::before { display: none; }
             .timeline-step { width: 100%; }
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
-            .ui-mockup { height: 400px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .ui-mockup { height: 300px; }
             .mockup-sidebar { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.125rem; }
+            .hero-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -593,7 +625,12 @@
                 <div class="logo-icon"></div>
                 FCI LMS
             </a>
-            <div class="nav-links">
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+
+            <div class="nav-links" id="navLinks">
                 <a href="#platform">Platform</a>
                 <a href="#assessments">Assessments</a>
                 <a href="#solutions">Solutions</a>
@@ -961,6 +998,18 @@
                     themeToggle.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>';
                 }
             });
+
+            // Mobile Menu Toggle
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            const navActions = document.getElementById('navActions');
+            
+            if (mobileBtn) {
+                mobileBtn.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                    navActions.classList.toggle('active');
+                });
+            }
         });
     </script>
 </body>

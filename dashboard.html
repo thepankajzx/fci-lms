@@ -52,6 +52,11 @@
             overflow-x: hidden;
         }
 
+        .app-container {
+            display: flex;
+            width: 100%;
+        }
+
         /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
@@ -61,7 +66,8 @@
             flex-direction: column;
             position: fixed;
             height: 100vh;
-            z-index: 40;
+            z-index: 50;
+            transition: all var(--transition-fast);
         }
 
         .sidebar-header {
@@ -137,6 +143,7 @@
             margin-left: var(--sidebar-width);
             display: flex;
             flex-direction: column;
+            width: calc(100% - var(--sidebar-width));
         }
 
         /* --- TOP BAR --- */
@@ -152,6 +159,9 @@
             top: 0;
             z-index: 30;
         }
+
+        .topbar-left { display: flex; align-items: center; gap: 1rem; }
+        .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
 
         .breadcrumbs {
             font-size: 0.9375rem;
@@ -244,7 +254,6 @@
         /* --- DASHBOARD CONTENT --- */
         .content {
             padding: 2rem;
-            width: 100%; /* Pura space use karne ke liye */
         }
 
         .welcome-header {
@@ -299,14 +308,12 @@
             color: var(--text-main);
         }
 
-        /* Main Dashboard Layout */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 1.5rem;
         }
 
-        /* Sections & Cards */
         .section-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -337,7 +344,6 @@
             text-decoration: none;
         }
 
-        /* Data Tables (Assigned Assessments) */
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -415,7 +421,6 @@
         
         .btn-table.primary:hover { background: var(--primary-hover); }
 
-        /* Recent Activity Feed */
         .activity-feed {
             padding: 1.5rem;
             display: flex;
@@ -467,7 +472,6 @@
             color: var(--text-muted);
         }
 
-        /* Quick Actions */
         .quick-actions {
             padding: 1.5rem;
             display: flex;
@@ -501,115 +505,133 @@
             background: #F8FAFC;
             border-color: #CBD5E1;
         }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 40;
+            backdrop-filter: blur(2px);
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { left: -100%; }
+            .sidebar.active { left: 0; }
+            .sidebar-overlay.active { display: block; }
+            .mobile-toggle { display: block; }
+            .main-wrapper { margin-left: 0; width: 100%; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar Shell -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <a href="index.html" class="logo" style="text-decoration:none;">
-                <div class="logo-icon"></div>
-                FCI LMS
-            </a>
-        </div>
-        <nav class="nav-menu">
-            <a href="index.html" class="nav-item" style="margin-bottom: 12px;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Back to Home
-            </a>
-            <a href="#" class="nav-item active">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                Dashboard
-            </a>
-            <a href="#" class="nav-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                My Assessments
-            </a>
-            <a href="#" class="nav-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                Reports
-            </a>
-            <a href="#" class="nav-item" onclick="logout()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                Logout
-            </a>
-        </nav>
-    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Main Workspace -->
-    <main class="main-wrapper">
-        
-        <!-- Top Navigation Bar -->
-        <header class="topbar">
-            <div class="breadcrumbs">
-                Home / <span>Dashboard</span>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo" style="text-decoration:none;">
+                    <div class="logo-icon"></div>
+                    FCI LMS
+                </a>
             </div>
-            
-            <div class="topbar-actions">
-                <div class="search-bar">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" placeholder="Search assessments...">
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Back to Home
+                </a>
+                <a href="#" class="nav-item active">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    My Assessments
+                </a>
+                <a href="#" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    Reports
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-toggle" id="mobileToggleBtn">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <div class="breadcrumbs">
+                        Home / <span>Dashboard</span>
+                    </div>
                 </div>
                 
-                <button class="icon-btn">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span class="notification-dot"></span>
-                </button>
-                
-                <div class="avatar-menu">
-                    <div class="avatar" id="user-initials">SJ</div>
-                    <svg style="width: 16px; color: var(--secondary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-            </div>
-        </header>
-
-        <!-- Page Content -->
-        <div class="content">
-            <div class="welcome-header">
-                <h1 id="welcome-message">Welcome back, Sarah</h1>
-                <p>Here is an overview of your assigned assessments and recent progress.</p>
-            </div>
-
-            <!-- Stats Row -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                        Total Assigned
+                <div class="topbar-actions">
+                    <div class="search-bar">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" placeholder="Search assessments...">
                     </div>
-                    <div class="stat-value">4</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <svg style="color: var(--success);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Completed
-                    </div>
-                    <div class="stat-value">2</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <svg style="color: var(--warning);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Pending Actions
-                    </div>
-                    <div class="stat-value">2</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <svg style="color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                        Average Score
-                    </div>
-                    <div class="stat-value">84%</div>
-                </div>
-            </div>
-
-            <!-- Two Column Layout -->
-            <div class="dashboard-grid">
-                
-                <!-- Left Column -->
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     
-                    <!-- Assigned Assessments -->
+                    <button class="icon-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="notification-dot"></span>
+                    </button>
+                    
+                    <div class="avatar-menu">
+                        <div class="avatar" id="user-initials">SJ</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="welcome-header">
+                    <h1 id="welcome-message">Welcome back, Sarah</h1>
+                    <p>Here is an overview of your assigned assessments and recent progress.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            Total Assigned
+                        </div>
+                        <div class="stat-value">4</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <svg style="color: var(--success);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Completed
+                        </div>
+                        <div class="stat-value">2</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <svg style="color: var(--warning);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Pending Actions
+                        </div>
+                        <div class="stat-value">2</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <svg style="color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            Average Score
+                        </div>
+                        <div class="stat-value">84%</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
                     <div class="section-card">
                         <div class="card-header">
                             <h2>Assigned Assessments</h2>
@@ -643,83 +665,55 @@
                                     <td><span class="badge pending">Pending</span></td>
                                     <td><button class="btn-table primary">Start</button></td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <div class="assessment-title">Anti-Bribery & Corruption</div>
-                                        <div class="assessment-meta">Completed on: Sep 02</div>
-                                    </td>
-                                    <td>Sep 10, 2026</td>
-                                    <td><span class="badge completed">Completed</span></td>
-                                    <td><button class="btn-table">Review</button></td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
 
-                </div>
-
-                <!-- Right Column -->
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    
-                    <!-- Quick Actions -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <h2>Quick Actions</h2>
-                        </div>
-                        <div class="quick-actions">
-                            <button class="btn-quick">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Continue Next Assessment
-                            </button>
-                            <button class="btn-quick">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                Download Latest Report
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="section-card">
-                        <div class="card-header">
-                            <h2>Recent Activity</h2>
-                        </div>
-                        <div class="activity-feed">
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">Completed <strong>Anti-Bribery & Corruption</strong></div>
-                                    <div class="activity-time">Sep 2, 2026 at 10:14 AM</div>
-                                </div>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="section-card">
+                            <div class="card-header">
+                                <h2>Quick Actions</h2>
                             </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">Assigned to <strong>Q3 Cybersecurity Compliance</strong></div>
-                                    <div class="activity-time">Aug 28, 2026 at 09:00 AM</div>
-                                </div>
+                            <div class="quick-actions">
+                                <button class="btn-quick">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Download Latest Report
+                                </button>
                             </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="section-card">
+                            <div class="card-header">
+                                <h2>Recent Activity</h2>
+                            </div>
+                            <div class="activity-feed">
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">Completed <strong>Anti-Bribery & Corruption</strong></div>
+                                        <div class="activity-time">Sep 2, 2026 at 10:14 AM</div>
+                                    </div>
                                 </div>
-                                <div class="activity-content">
-                                    <div class="activity-text">Profile updated successfully</div>
-                                    <div class="activity-time">Aug 15, 2026 at 04:30 PM</div>
+                                <div class="activity-item">
+                                    <div class="activity-icon">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">Assigned to <strong>Q3 Cybersecurity Compliance</strong></div>
+                                        <div class="activity-time">Aug 28, 2026 at 09:00 AM</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
-    <!-- App Scripts: Dynamically load real data -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -728,66 +722,19 @@
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
     <script>
-        // Set user info on load
         document.addEventListener('DOMContentLoaded', async () => {
             window.Auth.requireAuth();
             const user = window.Auth.getUser();
-            
             if (user && user.role !== 'Employee') {
                 window.location.href = 'admin.html';
                 return;
             }
-            
-            // Set welcome message
             const firstName = user.firstName || 'User';
             document.getElementById('welcome-message').textContent = `Welcome back, ${firstName}`;
-            
-            // Set Avatar Initials
             if(user.firstName) {
                 let initials = user.firstName[0];
-                if(user.lastName) {
-                    initials += user.lastName[0];
-                }
+                if(user.lastName) initials += user.lastName[0];
                 document.getElementById('user-initials').textContent = initials.toUpperCase();
-            }
-
-            // Fetch dynamic dashboard data
-            try {
-                const res = await window.ApiService.getDashboard(user.id);
-                if (res && res.data) {
-                    const data = res.data;
-                    
-                    // Update stat cards
-                    const statValues = document.querySelectorAll('.stat-value');
-                    if (statValues.length >= 4) {
-                        statValues[0].textContent = data.assigned;
-                        statValues[1].textContent = data.completed;
-                        statValues[2].textContent = data.assigned - data.completed;
-                        statValues[3].textContent = data.progress + '%';
-                    }
-
-                    // Update assigned assessments table
-                    const tbody = document.querySelector('.data-table tbody');
-                    if (tbody && data.pendingTasks) {
-                        if (data.pendingTasks.length > 0) {
-                            tbody.innerHTML = data.pendingTasks.map(task => `
-                                <tr>
-                                    <td>
-                                        <div class="assessment-title">${task.name}</div>
-                                        <div class="assessment-meta">Duration: ${task.time}</div>
-                                    </td>
-                                    <td>-</td>
-                                    <td><span class="badge pending">Pending</span></td>
-                                    <td><button class="btn-table primary" onclick="window.location.href='assessment.html?id=${task.id}'">Start</button></td>
-                                </tr>
-                            `).join('');
-                        } else {
-                            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem;">No pending assessments. Great job!</td></tr>`;
-                        }
-                    }
-                }
-            } catch(e) {
-                console.error("Failed to load dashboard data", e);
             }
         });
 
@@ -795,6 +742,20 @@
             window.Auth.logout();
             window.location.href = 'login.html';
         }
+
+        const mobileToggleBtn = document.getElementById('mobileToggleBtn');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        mobileToggleBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        });
     </script>
 </body>
 </html>
